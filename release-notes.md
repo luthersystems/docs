@@ -4,6 +4,18 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-03-11: substrate v2.169.0-fabric2 Release
+
+* **shiroclient:** improve retry logic for handling transaction commit timeouts
+* **substrate:** fix bug in `decimal-add-money`
+* **substrate:** remove `set-now` function from utils
+* **libmxf:** release 0.0.4 mxf npm package with decryption bugfix
+
+## 2022-01-26: substrate v2.168.0-fabric2 Release
+
+* **shirocore:** add list support in `elpspath`
+* **shiroclient:** improve verbose mode (-v)
+
 ## 2022-01-10: substrate v2.167.0-fabric2 Release
 
 * **fabric network builder**: Compatibility changes for use in containerized setups
