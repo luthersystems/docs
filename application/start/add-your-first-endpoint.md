@@ -130,7 +130,8 @@ description: >-
 6.  Run the functional tests and confirm that it fails:
 
     ```
-    $(make host-go-env)
+    $ make api
+    $ make oraclegotest
     go test -v -count 1 -run TestCreateAccount ./...
     Output:
         oracle_test.go:32: time="2021-07-15T16:15:35-07:00" level=error msg="json-rpc error received from phylum" cmd=delete_account jsonrpc_code=-32601 jsonrpc_message="Method not found"

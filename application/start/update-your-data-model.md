@@ -32,9 +32,10 @@ description: >-
     ```
 3.  Run the `martin` tests to confirm that the API returns a **400** status code for the unknown
 
-    field:
+    field.
 
     ```
+    $ make tests-martin
     ❏ Sandbox Example:  Managing Account Balances
     ↳ Create Account 1
       POST http://sandbox_oracle:8080/v1/accounts/abc-7ebd3108-ce4c-4667-abc9-9f69c5d4c3ad [400 Bad Request, 400B, 6ms]
@@ -74,12 +75,11 @@ description: >-
     ```
 
     > _**NOTE**_: The Go structs defined in `api/pb/oracle.pb.go` are updated to include `Name`.
-6.  Rebuild the Oracle to pickup the new changes, and run the integration
-
-    tests again:
+6.  Rebuild the Oracle to pickup the new changes, and run the tests again:
 
     ```bash
-    $ make mem-down mem-up integration
+    $ make mem-down mem-up
+    $ make tests-martin
     Output:
     ┌─────────────────────────┬───────────────────┬───────────────────┐
     │                         │          executed │            failed │
@@ -119,7 +119,7 @@ description: >-
 8.  Confirm the new test fails:
 
     ```bash
-    $ make integration
+    $ make tests-martin
     Output:
       #  failure           detail
 
@@ -180,7 +180,7 @@ description: >-
     > _**NOTE**_: The `statedb:put` function saves a value for a given key into the common ledger. All of the network participants have access to this state, and the updates are available across transactions. \
     > \
     > Here we use the `format-string` built-in to construct a unique key that we use to store the account name for a particular account ID.
-11. Use the helper functions to at account creation and retrieval:
+11. Use the helper functions to check name at account creation and retrieval:
 
     ```
     diff --git a/phylum/utils.lisp b/phylum/utils.lisp
