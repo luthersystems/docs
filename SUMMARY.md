@@ -5,7 +5,7 @@
 ## Product Walkthrough
 
 * [1. Process Mapping](product-walkthrough/1.-process-mapping/README.md)
-  * [2.2. Data Model](product-walkthrough/1.-process-mapping/2.2.-data-model.md)
+  * [1.2. Data Model](product-walkthrough/1.-process-mapping/2.2.-data-model.md)
 * [2. Identify Participants](product-walkthrough/2.-architecture-and-data-model.md)
 * [3. Allocate Nodes](product-walkthrough/2.-platform-infrastructure-setup/README.md)
   * [3.1. Common Setup Infrastructure](product-walkthrough/2.-platform-infrastructure-setup/common-infrastructure-setup/README.md)

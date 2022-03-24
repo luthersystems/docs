@@ -4,6 +4,11 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-03-23: buildenv v0.0.49
+
+* Bump go to 1.16.14
+* Bump alpine to 3.15
+
 ## 2022-01-10: substrate v2.167.0-fabric2 Release
 
 * **fabric network builder**: Compatibility changes for use in containerized setups
