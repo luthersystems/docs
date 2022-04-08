@@ -4,10 +4,34 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+
+
+## 2022-03-31: substrate v2.171.0-fabric2 Release
+
+* **external chaincode:** fix buildpack scripts to improve support for muti-peer networks
+
+## 2022-03-31: substrate v2.170.0-fabric2 Release
+
+* **shiroclient:** use latest shiroclient-sdk-go libraries with dependent tx private library fix
+* **buildenv:** upgrade to buildenv v0.0.49
+* **fabric-network-builder**: fix `sed` issue to work with latest docker versions
+* **shirocore:** use github [libhandlebars](https://github.com/luthersystems/svc/tree/main/libhandlebars)
+
 ## 2022-03-23: buildenv v0.0.49
 
 * Bump go to 1.16.14
 * Bump alpine to 3.15
+
+## 2022-03-11: substrate v2.169.0-fabric2 Release
+
+* **shiroclient:** add better support for transaction commit timeout retry flow
+* **shirocore:** Fix `decimal-money-add` helper function bug that threw error
+* **mxf:** fix bug in javascript library to allow decoding in node
+
+## 2022-01-26: substrate v2.168.0-fabric2 Release
+
+* **shirocore:** add support for vector types in elpspath
+* **shiroclient**: add better support for verbose flag in cli
 
 ## 2022-01-10: substrate v2.167.0-fabric2 Release
 
