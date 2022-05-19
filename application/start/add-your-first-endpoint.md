@@ -126,20 +126,18 @@ description: >-
      }
     ```
 
-6. Export environment variable to allow for go testing with Substrate. Run the command below 
-    ```bash
+6. Export environment variable to allow for go testing with ```go test```. Run the command below and copy the export statement from the output. The path will be different for every user so make sure you are copying your specific export statement and **NOT** the tutorials export statement below.
+    ```
     $ make print-export-path
-    ```
-    Copy the export statement from the output and execute in the terminal. The path will be different for every user, so make sure you are not copying and pasting the tutorials export statement.
-    ```
     echo "export SUBSTRATEHCP_FILE=/Users/craigpeoples/Repositories/sandbox/./build/substratehcp-darwin-amd64-2.170.0-fabric2"
     export SUBSTRATEHCP_FILE=/Users/craigpeoples/Repositories/sandbox/./build/substratehcp-darwin-amd64-2.170.0-fabric2
     ```
+    Paste the export statement in your terminal and execute it. This sets the new environment variable with the path to your substratehcp build.
     ```
     $ export SUBSTRATEHCP_FILE=/Users/craigpeoples/Repositories/sandbox/./build/substratehcp-darwin-amd64-2.170.0-fabric2
     ```
-    > _NOTE_: This variable needs to be exported for every shell session you want to execute go test
-    
+    > _NOTE_: This environment variable needs to be exported for every shell session you want to execute `go test`
+
 7.  Run the functional tests and confirm that it fails:
 
     ```
