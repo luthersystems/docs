@@ -35,7 +35,7 @@ description: >-
     field.
 
     ```
-    $ make tests-martin
+    $ make test-docker
     ❏ Sandbox Example:  Managing Account Balances
     ↳ Create Account 1
       POST http://sandbox_oracle:8080/v1/accounts/abc-7ebd3108-ce4c-4667-abc9-9f69c5d4c3ad [400 Bad Request, 400B, 6ms]
@@ -79,7 +79,7 @@ description: >-
 
     ```bash
     $ make mem-down mem-up
-    $ make tests-martin
+    $ make test-docker
     Output:
     ┌─────────────────────────┬───────────────────┬───────────────────┐
     │                         │          executed │            failed │
@@ -119,7 +119,7 @@ description: >-
 8.  Confirm the new test fails:
 
     ```bash
-    $ make tests-martin
+    $ make test-docker
     Output:
       #  failure           detail
 
