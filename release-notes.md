@@ -4,12 +4,57 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-05-26: buildenv v0.0.52
+
+* **internal**: CI/CD release improvements
+
+## 2022-05-25: buildenv v0.0.51
+
+* **internal**: major changes to facilitate migration to github and circle CI
+* **multi-architecture**: add multi-arch builds for amd64 and arm64
+* **api**: remove `prototool`, add `buf`
+* **go**: add `staticcheck` tool
+* **go**: add `jq` tool
+* **all**: fetch certificates from official `ca-certificates` package
+* **all**: fetch time zone data from official `tzdata` packages
+* **debian**: do not include suggested packages by default
+* **go-extra**: use ubuntu 20.04
+* **static go builds**: include build tags for time zone data
+
+## 2022-04-28: buildenv v0.0.50
+
+* **godynamic**: upgrade azcli to 2.35.0
+
+## 2022-04-01: substrate v2.171.0-fabric2 Release
+
+* **substrate**: fix buildpack for external chaincode
+
+## 2022-03-31: substrate v2.170.0-fabric2 Release
+
+* **buildenv**: bump to 0.0.49
+* **hyphae**: use public github for libhandlebars
+* **shiroclient**: add dependent TX ID logging
+* **shiroclient**: bump shiroclient-sdk-go to `ac2085246995`
+
+## 2022-03-23: buildenv v0.0.49
+
+* **alpine**: bump alpine to 3.15
+* **golang**: bump golang to 1.16.14
+
+## 2022-03-17: buildenv v0.0.48
+
+* **alpine**: remove old patches to fix security updates which are superfluous
+
 ## 2022-03-11: substrate v2.169.0-fabric2 Release
 
 * **shiroclient:** improve retry logic for handling transaction commit timeouts
 * **substrate:** fix bug in `decimal-add-money`
 * **substrate:** remove `set-now` function from utils
 * **libmxf:** release 0.0.4 mxf npm package with decryption bugfix
+
+## 2022-02-25: buildenv v0.0.47
+
+* **godynamic**: add curl
 
 ## 2022-01-26: substrate v2.168.0-fabric2 Release
 
@@ -21,6 +66,11 @@ description: Versioned releases of platform artifacts and their changes.
 * **fabric network builder**: Compatibility changes for use in containerized setups
 * **mxf**: add public [npm package](https://www.npmjs.com/package/mxf) for decoding mxf encrypted data off-chain
 * **substrate**: minor bug fixes
+
+## 2021-12-10: buildenv v0.0.46
+
+* **api**: remove api swagger bindata generation
+* **godynamic**: fix azure cli build
 
 ## 2021-11-18: substrate v2.166.0-fabric2 Release
 
@@ -41,11 +91,23 @@ description: Versioned releases of platform artifacts and their changes.
 * **shirocore:** Allow `cc:creator` in `init` endpoint in mock mode
 * **shirocore:** Fix `find-pos` and `find-pos-cmp` bug to correctly return `-1` when the index is not found.
 
-
-
 ## 2021-09-23: substrate v2.162.0-fabric2 Release
 
 * **substrate**: Add env variable SUBSTRATE\_LOG\_LEVEL to change log level
+
+## 2021-09-14: buildenv v0.0.45
+
+* **go-alpine**: use static binary dependencies
+
+## 2021-09-13: buildenv v0.0.44
+
+* **service-base-alpine**: update artifacts
+* **alpine**: apply security updates
+* **go-alpine**: remove `GOPRIVATE` config
+
+## 2021-08-23: buildenv v0.0.43
+
+* **go-alpine**: add go-alpine image
 
 ## 2021-07-27: buildenv v0.0.42
 
@@ -61,14 +123,14 @@ description: Versioned releases of platform artifacts and their changes.
 
 * **godynamic:** Use alpine 3.13 as a stable base.&#x20;
 
-## 2021-06-23: s**ubstrate v2.159.0-fabric2 Release**
+## 2021-06-23: substrate v2.159.0-fabric2 Release
 
 * **elps**: Upgrade to v1.14.0.
 * **fabric network builder**: Add `cert_expires` subcommand to list expiration dates of certificates
 * **fabric network builder**: Add mutli-step certificate generation process for improved customizaiton (make generate-template, make generate-assets).
 * **buildenv:** Upgrade to v0.0.40.
 
-## **2021-06-16: buildenv v0.0.40**
+## 2021-06-16: buildenv v0.0.40
 
 * **api, go, godynamic, goextra:** Cleanup build tags into common configuration.&#x20;
 * **api:** Allow including protos in custom directories.&#x20;
@@ -81,21 +143,21 @@ description: Versioned releases of platform artifacts and their changes.
 * **types:** Update `libschema` to support user-defined data types.
 * **macros:** Fix bugs related to macro expansion.
 
-## **2021-06-09: buildenv v0.0.39**
+## 2021-06-09: buildenv v0.0.39
 
 * **api. go, godynamic, goextra:** Properly parameterize go versions.
 * **api:** Fix typo in make targets and add missing make targets.&#x20;
 
-## **2021-05-26: buildenv v0.0.38**
+## 2021-05-26: buildenv v0.0.38
 
 * **all:** Continue to push images to ECR for backwards compatibility.&#x20;
 
-## **2021-05-25: buildenv v0.0.37**
+## 2021-05-25: buildenv v0.0.37
 
 * **api**, **go, godynamic, goextra, java, js, swaggercodegen:** Use `tini` for signal handling in the default image entrypoint.
 * **api. go, godynamic, goextra:** Upgrade to go1.16.4.
 
-## **2021-05-14: substrate v2.158.0-fabric2 Release**
+## 2021-05-14: substrate v2.158.0-fabric2 Release
 
 * **fabric network builde**r: Add `fnb-extend` command to generate certs for new orgs.
 * **fabric network builder:** Use version 2.2.0 of fabric cryptogen (names private keys `priv_sk` among other changes).
@@ -105,7 +167,7 @@ description: Versioned releases of platform artifacts and their changes.
 * **shiroclient gateway**: Retry tx simulation on chaincode 500 error, for increased resilience.&#x20;
 * **shiroclient gateway:** Move shiroclient-sdk-go to [github](https://github.com/luthersystems/shiroclient-sdk-go).&#x20;
 
-## **2021-03-30: substrate v2.157.0-fabric2 Release**
+## 2021-03-30: substrate v2.157.0-fabric2 Release
 
 * **shiroclient gateway:** Improve reliability of event service connectivity.
 * **shirocore:** Throw phylum errors during chaincode-to-chaincode (invoke-phylum) failures.&#x20;
@@ -115,7 +177,7 @@ description: Versioned releases of platform artifacts and their changes.
 * **shirocore**: Fix bug in internal minifer for elps symbols.&#x20;
 * **mock substrate:** Improve support for parallel go tests.&#x20;
 
-## **2021-03-05: substrate v2.155.0-fabric2 Release**
+## 2021-03-05: substrate v2.155.0-fabric2 Release
 
 * **shiroclient gateway:** Improve metrics logging during tx commit.
 * **shirocore:** Fix bug in `tx-pre-hooks` execution, which sets up shirocore env before application code runs.&#x20;
@@ -171,7 +233,7 @@ description: Versioned releases of platform artifacts and their changes.
 * **shirocore:** Add jaeger support for request tracing.
 * **buildenv:** Upgrade to v0.0.34.
 
-## **2021-01-29: buildenv v0.0.35 Release**
+## 2021-01-29: buildenv v0.0.35 Release
 
 * **godynamic:**  Add azure cli.
 * **js:** Add azure cli.
