@@ -4,6 +4,10 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-05-26: buildenv v0.0.53
+
+* **go-static**: use alpine, remove TINI vars
+
 ## 2022-05-26: buildenv v0.0.52
 
 * **internal**: CI/CD release improvements
