@@ -4,6 +4,11 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-06-03: buildenv v0.0.54
+
+* **godynamic**: fix azure-cli install
+* **js**: include python for `node-gyp` support
+
 ## 2022-05-26: buildenv v0.0.53
 
 * **go-static**: use alpine, remove TINI vars
