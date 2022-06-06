@@ -31,7 +31,8 @@ description: Versioned releases of platform artifacts and their changes.
 * **static go builds**: include build tags for time zone data
 
 ## 2022-04-28: buildenv v0.0.50
-
+*IMPORTANT*: All builds after this release include the `v` prefix in the tag,
+whereas before they were omitted (`0.0.50` vs `v0.0.50`).
 * **godynamic**: upgrade azcli to 2.35.0
 
 ## 2022-04-01: substrate v2.171.0-fabric2 Release
