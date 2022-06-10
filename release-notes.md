@@ -4,11 +4,15 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-06-09: substrate 2.172.0-fabric2
+
+* **shirocore**: performance bug fix concerning storage-toset-next-iters & storage-toset-next-iter-fill-page duplicate iteration
+* **golang**: bump golang to 1.16.15
+
 ## 2022-06-06: buildenv v0.0.55
 
 * **godynamic**: fix aws-cli install
 * **js**: add better support for `aws help` command
-
 ## 2022-06-03: buildenv v0.0.54
 
 * **godynamic**: fix azure-cli install
