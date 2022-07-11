@@ -6,7 +6,7 @@ description: Versioned releases of platform artifacts and their changes.
 
 ## 2022-06-09: substrate 2.173.0-fabric2
 
-* **shirocore**: removed performance improvement cache that was added in substrate 2.172.0-fabric2 release due to new bug introduced reading only the first toset in a tomulset iterations.
+* **shirocore**: removed performance improvement cache that was added in substrate 2.172.0-fabric2 release due to new bug introduced reading only the first toset when iterating a tomulset
 
 ## 2022-06-09: substrate 2.172.0-fabric2
 
