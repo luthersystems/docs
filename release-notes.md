@@ -8,7 +8,7 @@ description: Versioned releases of platform artifacts and their changes.
 
 * **shiroclient**: Add metrics reporting block height and server status
 
-## 2022-06-09: substrate 2.173.0-fabric2
+## 2022-07-08: substrate 2.173.0-fabric2
 
 * **shirocore**: remove performance improvement cache that was added in substrate 2.172.0-fabric2 release due to new bug introduced reading only the first toset when iterating a tomulset
 
