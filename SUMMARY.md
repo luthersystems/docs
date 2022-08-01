@@ -88,7 +88,6 @@
   * [Standard Library](platform/ellipse-dev-language/standard-library.md)
   * [Ellipse Testing](platform/ellipse-dev-language/ellipse-testing.md)
   * [Advanced Usage](platform/ellipse-dev-language/untitled.md)
-* [Release Notes](platform/release-notes.md)
 * [Modules](platform/modules-1.md)
 
 ## Infrastructure
