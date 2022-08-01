@@ -4,6 +4,10 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-07-26: substrate 2.175.0-fabric2
+
+* **shiroclient**: Add genesis block hash as tag on metrics; identifies environment together with license digest (already present as tag), which identifies which customer/client is sending metrics.
+
 ## 2022-07-20: substrate 2.174.0-fabric2
 
 * **shiroclient**: Add metrics reporting block height and server status
