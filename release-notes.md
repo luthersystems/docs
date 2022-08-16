@@ -4,6 +4,10 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-08-16: substrate 2.177.0-fabric2
+
+* **shirocore**: Add support in libauth for JWT token parsing with claims that have an `aud` array.
+
 ## 2022-08-08: substrate 2.176.0-fabric2
 
 * **shiroclient**: Metrics reporting will eventually restart, even if it fails despite retries.
