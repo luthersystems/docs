@@ -4,6 +4,10 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-08-19: substrate 2.178.0-fabric2
+
+* **pushproxy**: Publish pushproxy to public dockerhub `luthersystems/pushprox`
+
 ## 2022-08-16: substrate 2.177.0-fabric2
 
 * **shirocore**: Add support in libauth for JWT token parsing with claims that have an `aud` array.
