@@ -4,6 +4,12 @@ description: Versioned releases of platform artifacts and their changes.
 
 # Release Notes
 
+## 2022-08-22: lutherauth 4.1.0
+
+* **lutherauth-sdk**: Add JWKS TTL cache
+* **lutherauth**: Add backwards compatible support for PKCS1 PEM files with wrong banner
+* **lutherauth**: Add support for JWTs with array audience (`aud`)
+
 ## 2022-08-19: substrate 2.178.0-fabric2
 
 * **pushproxy**: Publish pushproxy to public dockerhub `luthersystems/pushprox`
