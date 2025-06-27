@@ -677,3 +677,313 @@ general_settings:
 ```
 
 - **Override**: If a Title contains an override key and `error_message` is set, the mock returns that error.
+
+#### Equifax Connector Settings
+
+Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
+
+```
+- name: EQUIFAX_ID_VERIFY # Must match exactly “EQUIFAX_ID_VERIFY”
+  mock: <true|false> # true = built-in mock; false = real Equifax SOAP API
+  equifax:
+    aml_url: "https://api.equifax.com/aml"
+    full_report_url: "https://api.equifax.com/full-report"
+    secrets_manager_key: "projects/myproj/secrets/equifax-api-key"
+    region: EU_WEST_2 # AWS region enum, e.g. US_EAST_1, EU_WEST_2, etc.
+    logon_url: "https://api.equifax.com/login"
+    eidv_url: "https://api.equifax.com/eidv"
+```
+
+- **aml_url**: AML (Anti-Money-Laundering) endpoint.
+- **full_report_url**: Full credit report API endpoint.
+- **secrets_manager_key**: AWS Secrets Manager key holding your Equifax credentials.
+- **region**: AWS region where the secret lives.
+- **logon_url** / **eidv_url**: SOAP URLs for logon/authentication and EIDV.
+- **mock**:
+
+  - `true` → uses the built-in mock implementation
+  - `false` → invokes the real Equifax SOAP API (requires proper AWS IAM & secret rotation)
+
+---
+
+##### Built-in Mock Test Users
+
+When `mock: true`, the mock Equifax connector recognizes two predefined test users. Use their exact field values in your requests to simulate different EIDV outcomes:
+
+```
+# Built-in Equifax test users (mock mode)
+EquifaxTestUsers:
+  - name: ConsiderTestUser1 # simulates a PEP result
+    account_number: ""
+    account_sort_code: ""
+    dob: "1945-11-01"
+    middle_name: ""
+    surname: "Smith"
+    forename: "Raymond"
+    full_address: "3 High Street"
+    address_number: "3"
+    address_street1: "High Street"
+    address_postcode: "BA13 3BN"
+    address_post_town: "Westbury"
+    nationality: "GB"
+
+  - name: ClearTestUser2 # simulates EIDV_RESULT_CLEAR
+    account_number: "00109396"
+    account_sort_code: "110822"
+    dob: "1960-01-25"
+    middle_name: ""
+    surname: "Martin"
+    forename: "Luke"
+    full_address: "325 Idverifier Street"
+    address_number: "325"
+    address_street1: "Idverifier Street"
+    address_postcode: "CB6 2AG"
+    address_post_town: "Ely"
+    nationality: "GB"
+```
+
+Simply plug one of these into your connector event payload when testing the mock.
+
+---
+
+#### GoCardless Connector Settings
+
+Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
+
+```
+- name: GOCARDLESS_PAYMENT # Must match exactly “GOCARDLESS_PAYMENT”
+  mock: <true|false> # true = built-in mock; false = real GoCardless API
+  gocardless:
+    access_token: "sk_test_XXXXXXXXX" # GoCardless API access token
+    base_url: "https://api.gocardless.com" # GoCardless endpoint (omit for sandbox)
+    webhook_secret: "whsec_XXXXXXXX" # (Optional) secret for webhook validation
+```
+
+- **access_token**: your GoCardless API key (test or live).
+- **base_url**: the HTTP base URL for GoCardless (e.g. sandbox vs. production).
+- **webhook_secret**: used only if you plan to receive & validate GoCardless webhooks.
+
+##### Mock Mode & Overrides
+
+When `mock: true`, the connector uses an in-memory mock rather than calling the real API. It provides:
+
+- A **default** mock response with:
+
+  - `id`: `"123ABC"`
+  - `status`: `"submitted"`
+  - `amount`/`currency`: taken from your request
+
+- The ability to **override** any field per-reference via `general_settings.mock_settings.mock_responses`:
+
+```
+general_settings:
+  mock_settings:
+    mock_responses:
+      "my-ref-001":
+        id: "OVERRIDE123"
+        amount: 2500 # override amount in minor units
+        currency: "EUR" # override currency
+        status: "confirmed" # override status
+```
+
+- If your payment request’s `reference` matches one of those keys, those values will be used in the mock response.
+- All other references fall back to the default.
+
+---
+
+#### Invoice Ninja Connector Settings
+
+Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
+
+```
+- name: INVOICE_NINJA # Must be exactly “INVOICE_NINJA”
+  mock: <true|false> # true = built-in mock; false = real Invoice Ninja API
+  invoice_ninja:
+    api_key: "your-api-key" # Your Invoice Ninja API key
+    base_url: "https://app.invoiceninja.com" # URL of your Invoice Ninja instance
+```
+
+- **api_key**: (sensitive) the API token for authenticating with Invoice Ninja.
+- **base_url**: the HTTP base URL for your Invoice Ninja server (cloud or self-hosted).
+
+##### Mock Mode & Overrides
+
+When `mock: true`, a simple in-memory mock is used instead of calling the real API.
+You can override the mock response per-invoice via `general_settings.mock_settings.mock_responses`:
+
+```
+general_settings:
+  mock_settings:
+    mock_responses:
+      "invoice_123": # key = invoiceId to override
+        id: "invoice_123" # must match the key
+        status: "override_sent" # new status (defaults to “mock_sent”)
+        error_message: "simulated send failure" # optional error message
+```
+
+- If your invoice ID matches one of those keys, the mock will return those fields.
+- Otherwise it falls back to a **default** response:
+
+  - `id`: `"mock_invoice_id"`
+  - `status`: `"mock_sent"`
+  - `error_message`: `""`
+
+No other fields are needed.
+
+---
+
+#### Luther PDF Service Connector Settings
+
+Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
+
+```
+- name: PDF_INVOICE # Must be exactly “PDF_INVOICE”
+  mock: <true|false> # true = built-in mock; false = real PDF service
+  pdfserv:
+    connection: "http://pdf-service:3000" # gRPC endpoint for the PDF generation service
+```
+
+By default, you can run the PDF service via our Docker image:
+
+```
+docker run -p 3000:3000 luthersystems/pdfserv
+```
+
+Available on Docker Hub: [https://hub.docker.com/r/luthersystems/pdfserv](https://hub.docker.com/r/luthersystems/pdfserv)
+
+##### Mock Mode & Overrides
+
+When `mock: true`, a simple in-memory mock is used. You can override its behavior via `general_settings.mock_settings.mock_responses`:
+
+```
+general_settings:
+  mock_settings:
+    mock_responses:
+      "<HtmlBase64_string>":
+        pdf_base64: "<override_base64_pdf>" # returned instead of default
+        error_message: "<some_error_msg>" # if set, mock returns this error
+```
+
+- Each top-level key is the exact `HtmlBase64` value from your `GenerateRequest`.
+- If a matching key is found:
+
+  - **error_message** non-empty → mock returns that error
+  - otherwise, **pdf_base64** is returned.
+
+- If no key matches, the mock falls back to a default:
+
+  - `pdf_base64`: `"mock_base64_encoded_pdf"`
+  - `error_message`: `""`
+
+---
+
+#### Postgres Connector Settings
+
+Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
+
+```
+- name: POSTGRES_CLAIMS_DB # Must be exactly “POSTGRES_CLAIMS_DB”
+  mock: <true|false> # true = built-in mock; false = real Postgres
+  postgres:
+    host: "db.example.com" # hostname or IP of your Postgres server
+    port: 5432 # port (default: 5432)
+    database: "claims_db" # database name
+    username: "dbuser" # authentication user
+    password: "secret" # authentication password
+    ssl_settings:
+      POSTGRES_SSL_MODE_VERIFY_FULL
+      # one of:
+      #   POSTGRES_SSL_MODE_UNSPECIFIED,
+      #   POSTGRES_SSL_MODE_DISABLE,
+      #   POSTGRES_SSL_MODE_ALLOW,
+      #   POSTGRES_SSL_MODE_PREFER,
+      #   POSTGRES_SSL_MODE_REQUIRE,
+      #   POSTGRES_SSL_MODE_VERIFY_CA,
+      #   POSTGRES_SSL_MODE_VERIFY_FULL
+```
+
+- **ssl_settings** controls TLS mode (see [PostgreSQL docs](https://www.postgresql.org/docs/current/libpq-ssl.html) for details).
+- On the AWS side you may need to configure security groups or certificates for TLS.
+
+##### Mock Mode & Overrides
+
+When `mock: true`, a mock connector simulates query responses. You can pre-seed or override its canned responses via:
+
+```
+general_settings:
+  mock_settings:
+    mock_responses:
+      "<SQL query string>":
+        columnNames:
+          - "id"
+          - "name"
+        rows:
+          - # first row
+            - clazz: POSTGRES_CLAZZ_INTEGRAL # enum: POSTGRES_CLAZZ_NULL, _BOOLEAN, _INTEGRAL, _FLOATING_POINT, _TEXT, _BLOB
+              representation: "1"
+            - clazz: POSTGRES_CLAZZ_TEXT
+              representation: "John Doe"
+          - # second row (if desired)
+            - clazz: POSTGRES_CLAZZ_TEXT
+              representation: "foo"
+            - clazz: POSTGRES_CLAZZ_TEXT
+              representation: "bar"
+```
+
+- The **key** is the exact SQL string from your `PostgresRequest.query`.
+- **columnNames**: list of column names.
+- **rows**: list of rows, each row an ordered list of `{ clazz, representation }` objects.
+- If you don’t provide an override for a given query, the mock falls back to:
+
+  - A health-check response for `SELECT 1` → one row, one integral column “1”.
+  - No entry for other queries → mock connector will error unless you add one.
+
+_View full connector reference & setup instructions at:_
+[https://dev.luthersystems.com/connectors?connector=postgres](https://dev.luthersystems.com/connectors?connector=postgres)
+
+---
+
+#### Stripe Connector Settings
+
+Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
+
+```yaml
+- name: STRIPE_PAYMENT # Must be exactly “STRIPE_PAYMENT”
+  mock: <true|false> # true = built-in mock; false = real Stripe
+  stripe:
+    secret: "sk_live_YOUR_SECRET_KEY" # Your Stripe secret key (starts with sk_…)
+```
+
+- **secret** is your Stripe API secret key.
+- On the Stripe side, ensure that key has permissions for charges and balance retrieval.
+
+##### Mock Mode & Overrides
+
+When `mock: true`, the connector returns canned or overridden responses. You can inject per-customer overrides via `general_settings.mock_settings.mock_responses`:
+
+```yaml
+general_settings:
+  mock_settings:
+    mock_responses:
+      "cust_123": # matches StripeRequest.customer_id
+        id: "chg_123" # override charge ID
+        status: "failed" # override status (e.g. "succeeded", "failed")
+        receipt_url: "https://receipt/123"
+        # error_message short-circuits: if present, Handle() returns this error
+        error_message: "simulated_stripe_error"
+      # any other customer IDs here...
+```
+
+- **Key**: the exact `customer_id` in your request.
+- **id** / **status** / **receipt_url** fill out the `StripeCreateChargeResponse`.
+- **error_message** (optional): if non-empty, the mock will return an error instead of a successful response.
+- If a customer ID has no entry, a default response is returned:
+
+  ```yaml
+  id:         "mock_charge_id"
+  status:     "succeeded"
+  receipt_url:"https://mock.stripe.com/receipt"
+  ```
+
+_For full setup instructions & API reference, see:_
+[https://dev.luthersystems.com/connectors?connector=stripe](https://dev.luthersystems.com/connectors?connector=stripe)
