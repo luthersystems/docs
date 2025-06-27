@@ -362,7 +362,7 @@ A full test suite can be found in the [`claim_test.lisp`](https://github.com/lut
 
 From the `phylum` directory:
 
-```sh
+```
 cd phylum && make test
 ```
 
@@ -392,13 +392,13 @@ INFO[...] state=CLAIM_STATE_OOEPAY_PAYMENT_TRIGGERED
 
 Overrides the creator function to simulate a fixed organization identity for testing:
 
-```lisp
+```elps
 (set 'cc:creator (lambda () "Org1MSP"))
 ```
 
 #### 2. **Claim Creation and Validation**
 
-```lisp
+```elps
 (test "claims"
   (let* ([claim (create-claim)])
     (assert (not (nil? (get claim "state"))))
@@ -410,7 +410,7 @@ Creates a new claim object and validates that it has a unique ID and an initiali
 
 #### 3. **Populating Claim Data**
 
-```lisp
+```elps
 (defun populate-test-claimant! (claim)
   (assoc! claim "claimant" (mk-test-claimant)))
 ```
@@ -419,7 +419,7 @@ Injects test claimant data to simulate a real-world scenario where personal deta
 
 #### 4. **Event Collection**
 
-```lisp
+```elps
 (defun get-connector-event-reqs () ...)
 ```
 
@@ -427,7 +427,7 @@ Extracts the full list of raised connector events within the current transaction
 
 #### 5. **Simulating ConnectorHub Response**
 
-```lisp
+```elps
 (defun process-single-event-empty-response ()
   (let* ([event-reqs (get-connector-event-reqs)]
          [req (first event-reqs)]
@@ -440,7 +440,7 @@ Feeds a mock response into the system to simulate a connector callback. The busi
 
 #### 6. **Full Event Loop Execution**
 
-```lisp
+```elps
 (defun process-event-loop (iters &optional start)
   (when start (start-new-event-loop))
   (if (<= iters 0)
@@ -466,7 +466,7 @@ These unit tests:
 
 ConnectorHub requires a `fabric/connectorhub.yml` file in your project’s `fabric/` directory to bootstrap its connection to the Fabric network and enable connectors. At a minimum, you must specify the following top-level settings:
 
-```yaml
+```
 msp-id: # Your organization’s MSP (Membership Service Provider) identifier (e.g. Org1MSP)
 user-id: # Enrollment user for chaincode invocations (e.g. User1). Must match crypto-config data.
 org-domain: # Your org’s domain (e.g. org1.luther.systems)
@@ -494,20 +494,20 @@ connectors: # Array of connector definitions
 
 Once you’ve defined your `fabric/connectorhub.yml`, you can quickly validate all connector settings without leaving your terminal:
 
-```bash
+```
 cd fabric/
 make test-connectors
 ```
 
 This target launches the ConnectorHub Docker image (read-only mounting your `fabric/` directory), runs:
 
-```bash
+```
 connectorhub test --config-file connectorhub.yaml
 ```
 
 and prints a status line per connector:
 
-```plain
+```
   [ OK ] EMAIL
   [ OK ] CAMUNDA_WORKFLOW
   [ OK ] POSTGRES_CLAIMS_DB
@@ -520,12 +520,15 @@ Any failures will be indicated with `[ ERROR ]` and the Make target will exit no
 
 Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
 
-```yaml
+```
 - name: AWS_SES # Must be exactly “AWS_SES”
   mock: <true|false> # true = built-in mock; false = real AWS SES
   aws_ses:
-    from_address: "no-reply@your-domain.com" # Verified SES sender address
     region: EU_WEST_2 # One of the SupportedAWSRegion enum values
+    from_address: "no-reply@your-domain.com" # Verified SES sender address
+    role_arn: "arn:aws:iam::123456789012:role/SESAccessRole"
+    access_key_id: "AKIAIOSFODNN7EXAMPLE" # Optional AWS credentials
+    secret_access_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" # Optional
 ```
 
 - **region** must be one of:
@@ -537,23 +540,96 @@ Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
   AP_SOUTHEAST_2, AP_NORTHEAST_1
   ```
 
-- For AWS-side setup (verifying from_address, IAM permissions, etc.), see the [SES setup guide](https://dev.luthersystems.com/connectors?connector=awsses).
+- **from_address**
+  SES-verified “From” email address
+- **role_arn**
+  IAM Role ARN that ConnectorHub will assume for SES access
+- **access_key_id** / **secret_access_key** _(optional)_
+  If you prefer direct credential use instead of `role_arn`, supply these AWS keys
+
+For AWS-side setup (verifying the `from_address`, configuring IAM, etc.), see the [SES setup guide](https://dev.luthersystems.com/connectors?connector=awsses&setup=true).
 
 #### Mock Mode Overrides
 
 When `mock: true`, you can inject per-subject errors via `general_settings.mock_settings.mock_responses`:
 
-```yaml
+```
 general_settings:
   mock_settings:
     mock_responses:
-      "TransientError": # any email subjects containing this substring
+      "TransientError": # matches any email subject containing this string
         error_message: "simulated SES failure"
 ```
 
-- **Recording**: Subjects containing the literal `RECORD_EMAIL` are captured in the mock’s `SentEmails` list for inspection.
-- **Validation**:
+---
 
-  ```bash
-  connectorhub test AWS_SES --config-file fabric/connectorhub.yml
-  ```
+##### Camunda: Workflow Start Connector (`CAMUNDA_WORKFLOW`)
+
+```
+- name: CAMUNDA_WORKFLOW # Exactly “CAMUNDA_WORKFLOW”
+  mock: <true|false> # true = built-in mock; false = real Camunda REST start
+  camunda-start:
+    gateway_url: "<URL>" # e.g. "https://camunda.local/engine-rest"
+    username: "<string>" # Basic auth username
+    password: "<string>" # Basic auth password (sensitive)
+    api_token: "<string>" # Optional bearer token (overrides username/password)
+```
+
+- **gateway_url**: Base URL for the Camunda “start process” endpoint.
+- **username / password / api_token**: HTTP authentication for your Camunda instance.
+
+###### Mock Mode Overrides
+
+When `mock: true`, you can override the default mock response per `processDefinitionKey` via:
+
+```
+general_settings:
+  mock_settings:
+    mock_responses:
+      "order-process": # matches any ProcessDefinitionKey containing this string
+        processInstanceId: "mock-123"
+        bpmnProcessId: "order-process"
+        version: 1
+        state: "ACTIVE" # ACTIVE, COMPLETED, or CANCELED
+        businessKey: "order-999"
+        tenantId: "tenant-xyz"
+```
+
+Any fields you omit will be filled in by the mock’s default response.
+
+---
+
+##### Camunda: Workflow Inspect Connector (`CAMUNDA_TASKLIST`)
+
+```
+- name: CAMUNDA_TASKLIST # Exactly “CAMUNDA_TASKLIST”
+  mock: <true|false> # true = built-in mock; false = real Camunda Operate API
+  camunda-inspect:
+    operate_url: "<URL>" # e.g. "https://camunda.local/operate"
+    username: "<string>" # Basic auth username
+    password: "<string>" # Basic auth password (sensitive)
+    api_token: "<string>" # Optional bearer token (overrides username/password)
+```
+
+- **operate_url**: Base URL for the Camunda Operate API.
+
+###### Mock Mode Overrides
+
+When `mock: true`, you can supply per-`processInstanceId` responses via:
+
+```
+general_settings:
+  mock_settings:
+    mock_responses:
+      "instance-123": # matches any ProcessInstanceId containing this string
+        processInstanceId: "instance-123"
+        bpmnProcessId: "order-process"
+        version: 2
+        state: "COMPLETED" # ACTIVE, COMPLETED, or CANCELED
+        businessKey: "order-999"
+        tenantId: "tenant-xyz"
+        startTime: "2025-06-27T12:00:00Z"
+        endTime: "2025-06-27T12:05:00Z"
+```
+
+A default mock response is always provided if no key matches, ensuring your tests never block.
