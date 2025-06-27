@@ -461,3 +461,99 @@ These unit tests:
 - Provide a repeatable testbed for evolving your automation logic
 - Let you quickly debug and troubleshoot logic in your Common Operations Script through fast, local unit tests
 - Save time by avoiding the need to run the full platform stack during development
+
+### Configuring ConnectorHub Locally
+
+ConnectorHub requires a `fabric/connectorhub.yml` file in your project’s `fabric/` directory to bootstrap its connection to the Fabric network and enable connectors. At a minimum, you must specify the following top-level settings:
+
+```yaml
+msp-id: # Your organization’s MSP (Membership Service Provider) identifier (e.g. Org1MSP)
+user-id: # Enrollment user for chaincode invocations (e.g. User1). Must match crypto-config data.
+org-domain: # Your org’s domain (e.g. org1.luther.systems)
+crypto-config-root-path: # Path to Fabric crypto materials (e.g. ./crypto-config) to connect to peer
+peer-name: # Name of the peer to connect to (e.g. peer0)
+peer-endpoint: # Peer address for gRPC (host:port)
+channel-name: # Channel where your chaincode is deployed
+chaincode-id: # Chaincode name (e.g. sandbox)
+connectors: # Array of connector definitions
+  - name: <connector name> # Must match the event “sys” value in your phylum
+    mock: <true|false> # Enable mock mode or real integration
+    <key>: # Connector-specific section key (filled out below)
+      … # (e.g. SMTP settings, URLs, credentials)
+```
+
+- **msp-id**: Identifies which MSP will endorse and sign transactions.
+- **user-id**: The Fabric identity used for submitting invoke/query calls.
+- **org-domain**: Used for constructing TLS/CA endpoints and DNS names.
+- **crypto-config-root-path**: Directory containing your crypto materials.
+- **peer-name** & **peer-endpoint**: Specify the Fabric peer to target for chaincode operations.
+- **channel-name** & **chaincode-id**: Tell ConnectorHub where your business logic lives on the ledger.
+- **connectors**: Lists each integration you wish to enable. You’ll declare their detailed settings in separate sections—this placeholder ensures ConnectorHub knows which connectors to initialize.
+
+### Testing ConnectorHub Configuration via Make
+
+Once you’ve defined your `fabric/connectorhub.yml`, you can quickly validate all connector settings without leaving your terminal:
+
+```bash
+cd fabric/
+make test-connectors
+```
+
+This target launches the ConnectorHub Docker image (read-only mounting your `fabric/` directory), runs:
+
+```bash
+connectorhub test --config-file connectorhub.yaml
+```
+
+and prints a status line per connector:
+
+```plain
+  [ OK ] EMAIL
+  [ OK ] CAMUNDA_WORKFLOW
+  [ OK ] POSTGRES_CLAIMS_DB
+  … etc.
+```
+
+Any failures will be indicated with `[ ERROR ]` and the Make target will exit non-zero, so you can catch misconfigurations early in your CI or local workflow.
+
+#### AWS SES Connector Settings
+
+Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
+
+```yaml
+- name: AWS_SES # Must be exactly “AWS_SES”
+  mock: <true|false> # true = built-in mock; false = real AWS SES
+  aws_ses:
+    from_address: "no-reply@your-domain.com" # Verified SES sender address
+    region: EU_WEST_2 # One of the SupportedAWSRegion enum values
+```
+
+- **region** must be one of:
+
+  ```
+  REGION_UNSPECIFIED, US_EAST_1, US_WEST_2,
+  EU_WEST_1, EU_WEST_2, EU_WEST_3,
+  EU_CENTRAL_1, AP_SOUTHEAST_1,
+  AP_SOUTHEAST_2, AP_NORTHEAST_1
+  ```
+
+- For AWS-side setup (verifying from_address, IAM permissions, etc.), see the [SES setup guide](https://dev.luthersystems.com/connectors?connector=awsses).
+
+#### Mock Mode Overrides
+
+When `mock: true`, you can inject per-subject errors via `general_settings.mock_settings.mock_responses`:
+
+```yaml
+general_settings:
+  mock_settings:
+    mock_responses:
+      "TransientError": # any email subjects containing this substring
+        error_message: "simulated SES failure"
+```
+
+- **Recording**: Subjects containing the literal `RECORD_EMAIL` are captured in the mock’s `SentEmails` list for inspection.
+- **Validation**:
+
+  ```bash
+  connectorhub test AWS_SES --config-file fabric/connectorhub.yml
+  ```
