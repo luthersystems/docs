@@ -947,7 +947,7 @@ _View full connector reference & setup instructions at:_
 
 Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
 
-```yaml
+```
 - name: STRIPE_PAYMENT # Must be exactly “STRIPE_PAYMENT”
   mock: <true|false> # true = built-in mock; false = real Stripe
   stripe:
@@ -961,7 +961,7 @@ Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
 
 When `mock: true`, the connector returns canned or overridden responses. You can inject per-customer overrides via `general_settings.mock_settings.mock_responses`:
 
-```yaml
+```
 general_settings:
   mock_settings:
     mock_responses:
@@ -979,7 +979,7 @@ general_settings:
 - **error_message** (optional): if non-empty, the mock will return an error instead of a successful response.
 - If a customer ID has no entry, a default response is returned:
 
-  ```yaml
+  ```
   id:         "mock_charge_id"
   status:     "succeeded"
   receipt_url:"https://mock.stripe.com/receipt"
