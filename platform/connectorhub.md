@@ -633,3 +633,47 @@ general_settings:
 ```
 
 A default mock response is always provided if no key matches, ensuring your tests never block.
+
+#### SMTP Email Connector Settings
+
+Add an entry under `connectors:` in your `fabric/connectorhub.yml`:
+
+```
+- name: EMAIL               # Exactly “EMAIL”
+  mock: <true|false>        # true = built-in mock; false = real SMTP send
+  email:
+    smtp_server:   "smtp.sendgrid.net"      # SMTP host (e.g., smtp.sendgrid.net)
+    from_address:  "no-reply@your-domain.com" # Sender address for outgoing mail
+    port:          587                     # SMTP port (e.g., 587 for TLS, 465 for SSL)
+    username:      "apikey"                # SMTP auth username (or API key)
+    password:      "<sensitive>"           # SMTP auth password (sensitive)
+    use_tls:       true                    # Enable TLS for the connection
+```
+
+- **smtp_server**: Hostname of your SMTP provider.
+- **from_address**: The “From:” header address (must be allowed by your provider).
+- **port**: Port number for SMTP.
+- **username / password**: Credentials for SMTP authentication.
+- **use_tls**: Toggle STARTTLS/SSL on the connection.
+
+For provider-specific setup (credentials, DNS records, etc.), see the [SMTP Email setup guide](https://dev.luthersystems.com/connectors?connector=email&setup=true).
+
+---
+
+##### Mock Mode Overrides
+
+When `mock: true`, the connector uses an in-memory mock that can:
+
+- **Override** to return an error for matching subjects.
+
+Configure overrides via `general_settings.mock_settings.mock_responses`:
+
+```
+general_settings:
+  mock_settings:
+    mock_responses:
+      "Error Subject": # any email Title containing this substring
+        error_message: "simulated_email_error"
+```
+
+- **Override**: If a Title contains an override key and `error_message` is set, the mock returns that error.
