@@ -1,8 +1,8 @@
 # Introduction
 
-![](.gitbook/assets/LS\_Logo.png)
+![](.gitbook/assets/LS_Logo.png)
 
-## Welcome!
+## Welcome
 
 These docs are designed to assist developers using the Luther Systems platform to build and deploy applications.&#x20;
 
@@ -20,8 +20,14 @@ Go here to understand the Luther platform and how to interact with it
 
 Go here for information on how to deploy and host your application
 
+## Platform Updates
+
+Go [here](/announcements.md) for major platform announcements.
+
+Go [here](./release-notes.md) for the release notes of the platform.
+
 ## Questions?
 
-If you have any questions then please click the box below to access our Jira Service Management portal:
+Go [here](./faq.md) for frequently asked questions.
 
-{% embed url="https://luthersystems.atlassian.net/servicedesk/customer/portal/7" %}
+Go [here](./contact-us.md) for different ways to reach us.
