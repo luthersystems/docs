@@ -1,16 +1,16 @@
 ---
-description: Scaffolding project.
+description: Sandbox project.
 ---
 
-# Copy of Getting Started
+# Getting Started
 
-## Welcome to the Getting Started section!
+## Welcome to the Getting Started section
 
 The following information will help you to start building your application right away. First, let's get your network set up.
 
 ## Network Configurator
 
-{% embed url="https://www.youtube.com/watch?v=GTTK2u8SQRo" %}
+{% embed url="<https://www.youtube.com/watch?v=GTTK2u8SQRo>" %}
 
 ## Environment Setup
 
@@ -74,19 +74,20 @@ Additionally the git hooks will run the format command each time to ensure all t
 
 You can configure your editor to run the format on every save. Note that you need to use the same config file. `yasi` will look for the config file in the current directory first, and if it doesn't find it, it will look in the home directory. You can create a soft link from your home directory to the real config file. There's a script that can do this for you, just run: `./scripts/install-yasi-config.sh`
 
-*   **VSCODE** VSCode doesn't have a builtin way of running any command on save, as of yet. However you can install this extension: [https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave) and add the following to your vscode config file:
+- **VSCODE** VSCode doesn't have a builtin way of running any command on save, as of yet. However you can install this extension: [https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave) and add the following to your vscode config file:
 
-    ```javascript
-     "emeraldwalk.runonsave": {
-        "commands": [
-           {
-           "match": "\\.lisp$",
-           "cmd": "yasi --no-exit --no-backup --no-warning --no-output --indent-comments --uniform --default-indent 2 --dialect clojure ${file}"
-           }
-        ]
-     }
-    ```
-* **Goland/IntelliJ**: You can use file watchers to run the above command on lisp file saves
+  ```javascript
+   "emeraldwalk.runonsave": {
+      "commands": [
+         {
+         "match": "\\.lisp$",
+         "cmd": "yasi --no-exit --no-backup --no-warning --no-output --indent-comments --uniform --default-indent 2 --dialect clojure ${file}"
+         }
+      ]
+   }
+  ```
+
+- **Goland/IntelliJ**: You can use file watchers to run the above command on lisp file saves
 
 **NOTE**: \
 When you download a new version of the substrate plugin, you'll need to manually update the value of the `SUBSTRATE_PLUGIN_FILE` environment variable as it contains the version number, in the default go test config and all the existing run configurations. We recommend installing Goland 2020.1 as it adds better go modules support and features around setting default environment variable for tests which we can utilise to simplify the setup. Due to the usage of go plugin for running the substrate the build environment has to be match what it was when the substrate plugin was built. We need to replicate all the configuration in the IDE to be able to run the tests through the IDE and get syntax working correctly. \
@@ -99,15 +100,15 @@ When you download a new version of the substrate plugin, you'll need to manually
 \
 **NOTE**: Configuring the default go tests allow you to profile the code through the UI as well! There are 2 environment variables which you need to set to custom values before each test, and any go command in general; `GOPATH` and `SUBSTRATE_PLUGIN_FILE`. There's a script that automates this process however there's no way of utilising it automatically in the IDE. Run that script to download the latest substrate plugin and by looking at the exported variables, find the valid values for the `GOPATH` and `SUBSTRATE_PLUGIN_FILE` env vars (as of now the `GOPATH` value is `/tmp/substrateplugingopath`) Navigate to Run > Edit Configurations... > Templates > Go Test.&#x20;
 
-* Set both env vars to the values you recorded in the last step.&#x20;
-* Tick the 'Use all custom build tags' checkbox.&#x20;
-* Add the following to the 'Go tool arguments' input box: `-parallel 50`. Feel free to experiment with this value and add additional relevant arguments in the future. Now every new test config that you create will automatically contain these 2 environment variables.&#x20;
+- Set both env vars to the values you recorded in the last step.&#x20;
+- Tick the 'Use all custom build tags' checkbox.&#x20;
+- Add the following to the 'Go tool arguments' input box: `-parallel 50`. Feel free to experiment with this value and add additional relevant arguments in the future. Now every new test config that you create will automatically contain these 2 environment variables.&#x20;
 
 **Optional**: A default run all configuration can be found in `./.run/go_test.run.xml` Goland will automatically load this configuration for you (requires 2020.1+) You can use it to run the tests. You may also wish to create a run configuration for the different go test tags, this will allow you to run all the tests relevant to a feature.
 
 ## Auth Flow
 
-Scaffold is configurable to allow users to authenticate using any number of IDPs that support OAuth2 (see UserAuthentications description in the API docs).
+Sandbox is configurable to allow users to authenticate using any number of IDPs that support OAuth2 (see UserAuthentications description in the API docs).
 
 Users specify one or more UserAuthentications which reference existing AuthenticationProviders in the system. The AuthenticationProviders define IDP settings that are used to authenticate and validate the tokens generated by the IDP.
 
@@ -146,56 +147,14 @@ curl -s -H "X-API-Key: $(aws_api_key integ)" \
   https://integration.luthersystemsapp.com/test/request?request_id=REQUEST_ID | jq
 ```
 
-## Known Issues
-
-*   Docker may complain that it does not have ECR access. This is a bug in our make dependencies where `make docker-login` target is being skipped. If you see this error make sure to run:
-
-    ```
-    make docker-login
-    ```
-
-    explicitly. You must have valid AWS credentials set in your environment in order for this make target to succeed.\
-
-*   If this message occurs during a Go test run with `./scripts/go-substrate-wrapper.sh`
-
-    ```
-     Error downloading object: api/pb/oracle.pb.go (80d718e): Smudge error: Error downloading api/pb/oracle.pb.go (80d718e7030d5113aa98a4be0621fa44f1ddfff969abf824ce79caac4ca530ed): batch request: missing protocol: ""
-    ```
-
-    Try deleting `/tmp/substrateplugingopath/` with `sudo`:
-
-    ```
-     sudo rm -rf /tmp/substrateplugingopath/
-    ```
-*   If this message occurs during a `make mem-up`
-
-    ```
-     go build github.com/spf13/cast: mkdir /tmp/go-build357730645/b338/: no space left on device
-     go build github.com/spf13/jwalterweatherman: mkdir /tmp/go-build357730645/b339/: no space left on device
-     go build github.com/subosito/gotenv: mkdir /tmp/go-build357730645/b340/: no space left on device
-     go build gopkg.in/ini.v1: mkdir /tmp/go-build357730645/b341/: no space left on device
-     go build gopkg.in/yaml.v2: mkdir /tmp/go-build357730645/b342/: no space left on device
-     make: *** [/opt/Dockerfile.godynamic.mk:17: build] Error 1
-    ```
-
-    Try `docker system prune` to remove unused containers, networks, images (both dangling and unreferenced).\
-
-* If this message occurs during `make up` or `make mem-up`
-
-```
-Error connecting to agent: Connection refused
-```
-
-You've likely forgotten to run `pinata-ssh-forward`, retry after running this.
-
 ## Git Workflow
 
 All tests in master branch should always pass.
 
-* _It should always be safe to cut a release off master_.
-* _Code should always be merged to master through a Pull Request (PR)_.
-* _Follow the_ [_7 rules of a git commit_](https://chris.beams.io/posts/git-commit/) _and_ [_git commit message guide_](https://github.com/RomuloOliveira/commit-messages-guide)_._
-* _Builds should be reproducible_.
+- _It should always be safe to cut a release off master_.
+- _Code should always be merged to master through a Pull Request (PR)_.
+- _Follow the_ [_7 rules of a git commit_](https://chris.beams.io/posts/git-commit/) _and_ [_git commit message guide_](https://github.com/RomuloOliveira/commit-messages-guide)_._
+- _Builds should be reproducible_.
 
 Set your email for this repo, e.g.:
 
@@ -211,14 +170,6 @@ Edit `SUBSTRATE_VERSION` in `common.mk`.
 
 **NOTE** If possible the Goland configurations in `.run` also should be updated as the environment variables will now be outdated.
 
-## Go mod
-
-To use go mod with private bitbucket repos set:
-
-```
-export GO111MODULE=on
-git config --global url."git@bitbucket.org:".insteadOf "https://bitbucket.org/"
-go env -w GOPRIVATE=bitbucket.org/luthersystems
 ```
 
 ## References
@@ -226,36 +177,41 @@ go env -w GOPRIVATE=bitbucket.org/luthersystems
 \[0] [ELPS Language Guide](https://github.com/luthersystems/elps/blob/master/docs/lang.md) \[1] [RFC7519](https://tools.ietf.org/html/rfc7519)
 
 ```
+
                          UI
-                         +                
-                         |                
+                         +
+                         |
          +---------------v--------------+
          |                              +<----+ Swagger Specification:
          |             API              |       api/swagger/oracle.swagger.json
-         +--------------+---------------+       
+         +--------------+---------------+
          |                              |
          |        Oracle Service        |
          |     oracleserv/oracle/       |
          +---+--------------+---------+-+
              |              |
      gRPC -> |              |
-+------------v------+       |
-|  PDF service      |       |
-| substrate/pdfserv |       |
-+-------------------+       |
-               JSON-RPC     |
-               +------------v-----------+
-               |  shiroclient gateway   |
-               |  substrate/shiroclient |
-               +-------------+----------+
-                             |
-                             | JSON-RPC
- +---------------------------v--------------------------+
- |                   Phylum Business Logic              |
- |                    phylum/                           |
- +------------------------------------------------------+
- |               Substrate Chaincode                    |
- +------------------------------------------------------+
- |            Hyperledger Fabric Services               |
- +------------------------------------------------------+
+
++------------v------+ |
+| PDF service | |
+| substrate/pdfserv | |
++-------------------+ |
+JSON-RPC |
++------------v-----------+
+| shiroclient gateway |
+| substrate/shiroclient |
++-------------+----------+
+|
+| JSON-RPC
++---------------------------v--------------------------+
+| Phylum Business Logic |
+| phylum/ |
++------------------------------------------------------+
+| Substrate Chaincode |
++------------------------------------------------------+
+| Hyperledger Fabric Services |
++------------------------------------------------------+
+
+```
+
 ```
