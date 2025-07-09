@@ -2,7 +2,7 @@
 description: Scaffolding project.
 ---
 
-# Getting Started
+# Copy of Getting Started
 
 ## Welcome to the Getting Started section!
 

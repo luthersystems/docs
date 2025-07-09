@@ -5,7 +5,7 @@ description: >-
   in Go and editing the phylum.
 ---
 
-# Add Your First Endpoint
+# Copy of Add Your First Endpoint
 
 ## **Update the API Specification and the Oracle**
 
@@ -126,23 +126,11 @@ description: >-
      }
     ```
 
-6. Export environment variable to allow for go testing with ```go test```. Run the command below and copy the export statement from the output. The path will be different for every user so make sure you are copying your specific export statement and **NOT** the tutorials export statement below.
-    ```
-    $ make print-export-path
-    echo "export SUBSTRATEHCP_FILE=/Users/craigpeoples/Repositories/sandbox/./build/substratehcp-darwin-amd64-2.170.0-fabric2"
-    export SUBSTRATEHCP_FILE=/Users/craigpeoples/Repositories/sandbox/./build/substratehcp-darwin-amd64-2.170.0-fabric2
-    ```
-    Paste the export statement in your terminal and execute it. This sets the new environment variable with the path to your substratehcp build.
-    ```
-    $ export SUBSTRATEHCP_FILE=/Users/craigpeoples/Repositories/sandbox/./build/substratehcp-darwin-amd64-2.170.0-fabric2
-    ```
-    > _NOTE_: This environment variable needs to be exported for every shell session you want to execute `go test`
 
-7.  Run the functional tests and confirm that it fails:
+6.  Run the functional tests and confirm that it fails:
 
     ```
-    $ make api
-    $ make oraclegotest
+    $(make host-go-env)
     go test -v -count 1 -run TestCreateAccount ./...
     Output:
         oracle_test.go:32: time="2021-07-15T16:15:35-07:00" level=error msg="json-rpc error received from phylum" cmd=delete_account jsonrpc_code=-32601 jsonrpc_message="Method not found"
@@ -153,7 +141,6 @@ description: >-
     ```
 
     > _NOTE_: `$(make host-go-env)` sets env in your local shell. It only needs to be called once per shell session.
-
 
 
 

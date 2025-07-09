@@ -4,7 +4,7 @@ description: >-
   to your Smart Contract.
 ---
 
-# Run Your First Network
+# Copy of Run Your First Network
 
 ## Launch Your Network
 

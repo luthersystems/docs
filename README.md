@@ -2,9 +2,11 @@
 
 ![](.gitbook/assets/LS_Logo.png)
 
+See [glossary](./glossary.md) for an overview of key components in the Luther platform.
+
 ## Welcome
 
-These docs are designed to assist developers using the Luther Systems platform to build and deploy applications.&#x20;
+These docs are designed to assist developers using the Luther Systems platform to build and deploy applications.
 
 The documentation is broken down into 3 main sections:
 
