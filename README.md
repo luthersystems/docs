@@ -1,6 +1,6 @@
 # Introduction
 
-![](.gitbook/assets/LS_Logo.png)
+![](assets/LS_Logo.png)
 
 See [glossary](./glossary.md) for an overview of key components in the Luther platform.
 
