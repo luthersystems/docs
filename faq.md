@@ -1,35 +1,81 @@
+# Frequently Asked Questions
+
+## 🧩 General
+
+### What happens if a system I want to add isn’t on the connector list?
+
+No problem! Click **"Can’t find connector"** on the Add Connector screen.
+It’ll walk you through a few quick questions so we can start building the
+connector you need. We’ll even give you **$500 in platform credit** for any new
+connector request.
+
+Prefer to talk it through? Book a quick call:  
+[dev.luthersystems.com/tech-call](http://dev.luthersystems.com/tech-call)
+
 ---
-description: Frequently asked questions
+
+### What if I need a backend setting that isn’t supported?
+
+Let’s figure it out together. Message us on Discord or book a short call at  
+[dev.luthersystems.com/tech-call](http://dev.luthersystems.com/tech-call)
+
 ---
 
-# FAQ
+### Can I contribute to building connectors?
 
-{% tabs %}
-{% tab title="Elps" %}
-## Is there a list of builtin elps functions?
+Absolutely! We’re in the process of open-sourcing **ConnectorHub**, which
+includes an SDK to help you build and contribute new connectors.
 
-github.com/luthersystems/elps/lisp/builtins.go
+Stay tuned here:  
+[github.com/luthersystems/connectorhub](https://github.com/luthersystems/connectorhub)
 
-## Is there a version of the key-argument approach of function definition where all arguments are required?
+---
 
-You can combine key-argument with required fields, if you specify the required fields first. There is not a way to make key-arg fields required.
+### Can Cursor suggest sample code for my application?
 
-## What does \`default\` do?
+Yes! After onboarding, we spin up a **preconfigured repo** for you. Cursor is
+fully set up to help and uses the `docs/` directory and built-in examples to
+suggest relevant, modifiable code tailored to your app.
 
-If the first argument is nil or false it will return the second argument, otherwise it will return the first.
+---
 
-## Can you call go code from elps?
+## 🧠 ELPS
 
-https://github.com/luthersystems/elps/blob/master/docs/embed.md discusses how to call Go from elps.
+### Is there a list of built-in ELPS functions?
 
-## What is the difference between \`\[\` and \`(\` ?
+Yes — check out:  
+[elps/lisp/builtins.go](https://github.com/luthersystems/elps/blob/master/lisp/builtins.go)
 
-They are equivalent, and only cosmetic to make reading clearer.
+---
 
-## How does \`now\` work in elps?
+### Can I require arguments when using key-argument style?
 
-`now` is an RFC3339 timestamp that is set by shiroclient, and is common across multiple simulations of a transaction.
-{% endtab %}
-{% endtabs %}
+Partially — you can require arguments by specifying them first. There’s no way
+to make key-arguments themselves required.
 
-##
+---
+
+### What does `default` do?
+
+It returns the second argument if the first is `nil` or `false`. Otherwise, it
+returns the first argument.
+
+---
+
+### Can I call Go code from ELPS?
+
+Yes — see the embedding guide:  
+[elps/docs/embed.md](https://github.com/luthersystems/elps/blob/master/docs/embed.md)
+
+---
+
+### What’s the difference between `[` and `(`?
+
+They are functionally equivalent — just syntactic sugar to help with readability.
+
+---
+
+### How does `now` work in ELPS?
+
+`now` is an RFC3339 timestamp set by `shiroclient`. It’s consistent across all
+simulations of a transaction, ensuring deterministic behavior.
