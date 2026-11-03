@@ -29,8 +29,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: site-sync
-          fetch-depth: 2
-      - name: Open or update the sync PR
+      - name: Open, update or close the sync PR
         env:
           GH_TOKEN: ${{ github.token }}
         run: scripts/site-sync-pr.sh

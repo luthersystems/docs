@@ -22,4 +22,5 @@ jobs:
         env:
           BASE: origin/${{ github.base_ref }}
           HEAD_BRANCH: ${{ github.head_ref }}
-        run: scripts/site-sync-guard.sh "$BASE" "$HEAD_BRANCH"
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: scripts/site-sync-guard.sh "$BASE" "$HEAD_BRANCH" "$HEAD_REPO"
