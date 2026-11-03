@@ -129,7 +129,7 @@ Output:
                        inside "Sandbox Example:  Managing Account Balances / Transfer"
 ```
 
-9.  Update the business logic in the phylum to store and the optional account name. First update `theroutes.lisp` file to include the new field in the `create-account!` call:
+9.  Update the business logic in the phylum to store and the optional account name. First update the `routes.lisp` file to include the new field in the `create-account!` call:
 
 ```
 +++ b/phylum/routes.lisp

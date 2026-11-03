@@ -4,7 +4,7 @@ description: These utility functions are provided in the utils package for writi
 
 # Automated Migrations
 
-# Automated Migrations with Context
+## Automated Migrations with Context
 
 ## 1\. Introduction
 

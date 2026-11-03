@@ -1,7 +1,3 @@
----
-description: 
----
-
 # Language Guide
 
 ## Basics
@@ -12,7 +8,7 @@ Lisp code interpreted by elps is given as a sequences of expressions encoded as 
 
 ## Expressions
 
-An expression is either an atom or a sequence of expressions delimited by parenthesis (...). An environment evaluates one expression at a time, evaluating each sub-expression before evaluating the main expression. Expressions may also be quoted by prefixing it with an single quote '. Quoted expressions are discussed in depth along with [expression evaluation](https://github.com/luthersystems/docs/blob/main/product-walkthrough/5.-business-logic-and-module-connectivity-development/6.2.-smart-contract-development-and-testing/ellipse-dev-language/broken-reference/README.md).
+An expression is either an atom or a sequence of expressions delimited by parenthesis `(...)`. An environment evaluates one expression at a time, evaluating each sub-expression before evaluating the main expression. Expressions may also be quoted by prefixing it with an single quote `'`. Quoted expressions are discussed in depth along with [expression evaluation](#expression-evaluation).
 
 ---
 
@@ -30,7 +26,7 @@ Numbers can be either int or floating point and will be converted between the tw
 
 ### Strings
 
-Strings are a sequence of utf-8 text delimited by double quotes ". Strings cannot contain line breaks. A codepoint in a string may be escaped with a preceding backslash .
+Strings are a sequence of utf-8 text delimited by double quotes `"`. Strings cannot contain line breaks. A codepoint in a string may be escaped with a preceding backslash `\`.
 
 ---
 
@@ -42,7 +38,7 @@ The empty expression () is a special expression called "nil" and evaluates to it
 
 ### Atomic Expressions
 
-Symbols evaluate to the last value bound to that symbol at the deepest scope at which that symbol is bound. Numbers and strings evaluate to themselves.
+Symbols evaluate to the last value bound to that symbol at the deepest [scope](#scope) at which that symbol is bound. Numbers and strings evaluate to themselves.
 
 ### Quoted Expressions
 
@@ -68,7 +64,7 @@ A function is a symbolic expression that utilizes some number of unbound argumen
 (lambda (x) (- x))
 ```
 
-The above expression evaluates to an anonymous function (a lambda function) which has one argument x and evaluates to the expression (- x) when x is bound to a value through [expression evaluation](https://github.com/luthersystems/docs/blob/main/product-walkthrough/5.-business-logic-and-module-connectivity-development/6.2.-smart-contract-development-and-testing/ellipse-dev-language/broken-reference/README.md).
+The above expression evaluates to an anonymous function (a lambda function) which has one argument `x` and evaluates to the expression `(- x)` when x is bound to a value through [expression evaluation](#expression-evaluation).
 
 ```lisp
 ((lambda (x) (- x)) 3)  ; evaluates to -3
@@ -97,6 +93,8 @@ If the complete list of arguments for a function cannot be known ahead of time t
 Let's decompose the call to `negative-sum?`. The function negative sum has its argument bound to `'(1 2 -2)`. When funcall calls sum-list, it passes this list verbatim. When sum-list passes this list to `apply`, the list is unpacked as if the list contents had been passed to `+` as its arguments. Other than this distinction the two functions, `apply` and `funcall` operate the same way.
 
 ### Optional function arguments
+
+If a function's formal argument list contains the special symbol `&optional` the following arguments are not required to call the function.
 
 ```lisp
 (defun add1 (&optional x) (+ 1 (or x 0)))
@@ -139,7 +137,7 @@ Variadic functions are prohibited from having keyword arguments due to confusing
 
 ### Keyword arguments
 
-If a function's formal argument list contains the special symbol &key the following symbols are keyword arguments. Keyword arguments are like optional arguments, in that they are not required to invoke the function. Furthermore they are bound to nil values when not provided. However, keyword arguments are unordered and when passed must be preceded by a keyword symbol indicating which are follows.
+If a function's formal argument list contains the special symbol `&key` the following symbols are keyword arguments. Keyword arguments are like optional arguments, in that they are not required to invoke the function. Furthermore they are bound to nil values when not provided. However, keyword arguments are unordered and when passed must be preceded by a keyword symbol indicating which are follows.
 
 ```lisp
 (defun point2d (&key x y) (list (or x 0) (or y 0)))
@@ -204,7 +202,7 @@ The `gensym` builtin is used to generate a new symbol, which is most often used 
 
 ## Parens () and braces \[\]
 
-Matching braces produce a quoted list. As with parens, an open brace \[ must be closed using a close brace \]. Using parens with braces can improve readability. Conventionally, braces are used with let to define the bindings.
+Matching braces produce a quoted list. As with parens, an open brace `[` must be closed using a close brace `]`. Using parens with braces can improve readability. Conventionally, braces are used with `let` to define the bindings.
 
 ```lisp
 (let ([x 1]

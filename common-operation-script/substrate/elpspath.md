@@ -6,7 +6,7 @@ description: Path queries over ellipse objects.
 
 Inspired by jq simple selectors, but over elps objects! This library allows concise and easy manipulation of elps data. `parse_tests.go` has a comprehensive set of tests to demonstrate typical queries. You can readily compare these results against jq using the jq playground: [https://jqplay.org](https://jqplay.org/).
 
-We only support simple selectors that output a single value. All paths are strings that must begin with . A path consists of a series of selectors, and performs operations (both mutating and non-mutating versions): 1) Get, 2) Set, 3) Delete, 4) Nil. These operations take ELPS LVals as input, and return an elps LVal.
+We only support simple selectors that output a single value. All paths are strings that must begin with `.`. A path consists of a series of selectors, and performs operations (both mutating and non-mutating versions): 1) Get, 2) Set, 3) Delete, 4) Nil. These operations take ELPS LVals as input, and return an elps LVal.
 
 In the below examples we use JSON to represent elps data structures.
 

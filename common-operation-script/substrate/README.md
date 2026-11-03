@@ -246,7 +246,9 @@ The chaincode `cc` package provides the basic building blocks for interacting wi
 
 `(defun force-no-commit-tx ()` forces a transaction to not be committed by including information in the transaction response that signals to `shiroclient` to skip commitment.
 
-*IMPORTANT*: This function cannot be "undone"--once this function is called the transaction will not be committed. `(defun substrate-version()` Returns the version string of substrate.
+*IMPORTANT*: This function cannot be "undone"--once this function is called the transaction will not be committed.
+
+`(defun substrate-version ()` Returns the version string of substrate.
 
 **Time**
 

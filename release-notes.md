@@ -2218,7 +2218,7 @@ Details: [elps v1.17.0 release](https://github.com/luthersystems/elps/releases/t
 
 ## 2021-07-27: buildenv v0.0.42
 
-- **go**: Change user and owner of built artifacts using environment variables
+- **go**: Change user and owner of built artifacts using the `DOCKER_CHOWN_USER` and `DOCKER_CHOWN_GROUP` environment variables
 
 ## 2021-07-21: elps v1.14.1
 

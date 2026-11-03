@@ -996,4 +996,5 @@ general_settings:
     receipt_url:"https://mock.stripe.com/receipt"
     ```
 
-*For full setup instructions & API reference, see:* \[
+*For full setup instructions & API reference, see:*
+[https://dev.luthersystems.com/connectors?connector=stripe](https://dev.luthersystems.com/connectors?connector=stripe)

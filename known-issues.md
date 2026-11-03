@@ -22,7 +22,7 @@ head is a macro or a special operator. Examples are `default`, `when`, `and`,
 `thread step is not a regular function`:
 
 ```lisp
-(thread-last x (default 0) (+ 1))
+(thread-first x (default 0) (+ 1))
 ```
 
 The phylum loads, and `shirotester lint` does not report the step. The error
@@ -33,7 +33,7 @@ step:
 
 ```lisp
 (defun default-to (v d) (if (nil? v) d v))
-(thread-last x (default-to 0) (+ 1))
+(thread-first x (default-to 0) (+ 1))
 ```
 
 Details: [luthersystems/elps#820](https://github.com/luthersystems/elps/issues/820).

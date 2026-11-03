@@ -1,7 +1,3 @@
----
-description: 
----
-
 # Testing Guidelines
 
 ## Overview

@@ -1,7 +1,3 @@
----
-description: 
----
-
 # Advanced Usage
 
 The elps project is intended to be used as an embedded language, allowing programs to be extended easily and dynamically.
@@ -10,7 +6,7 @@ The elps project is intended to be used as an embedded language, allowing progra
 
 To initialize a new environment set its Reader and load the packages you that want to be accessible.
 
-```
+```go
 env := lisp.NewEnv(nil)
 env.Reader = parser.NewReader()
 lerr := lisp.InitializeUserEnv(env)
@@ -29,8 +25,25 @@ InitializeUserEnv loads the base language package, lisp. The remaining packages 
 
 Lisp code can be 'loaded' (parsed and evaluated) using the `env.Load` family of functions.
 
-```
+```go
 ret := env.LoadString("code.lisp", lispcode)
+if ret.Type == lisp.LError {
+    // handle an error
+}
+```
+
+---
+
+## Loading parsed code more than once
+
+`lisp.TextLoader` parses the source one time and returns a loader. Call the loader once for each environment that needs the code, so the source is not parsed again each time.
+
+```go
+load, err := lisp.TextLoader(parser.NewReader(), "code.lisp", strings.NewReader(lispcode))
+if err != nil {
+    // handle a parse error
+}
+ret := load(env)
 if ret.Type == lisp.LError {
     // handle an error
 }
@@ -56,7 +69,7 @@ All lisp values are represented in Go as the LVal type. The lisp type of a value
 
 In general, a function **MUST NOT** modify fields of an LVal. There are cases where functions are "destructive" and modify storage referenced by certain data types. However even these functions **MUST NOT** modify top-level top level LVal fields in order to maintain soundness of computation. For example, a destructive function may be defined that modifies LVal.Cells\[0\] by re-assigning it to a new value.
 
-```
+```go
 v.Cells[0] = Int(-v.Cells[0].Int)
 ```
 
@@ -68,7 +81,7 @@ String values (those with Type equal to `LString`) and Symbols (those with Type 
 
 Lists are stores as SExpr types. Though typically, when returning a list from a function, a quoted SExpr is desired. Quoted SExprs can be conveniently created using the `QExpr()` function.
 
-```
+```go
 return QExpr([]*lisp.LVal{lisp.Int(1), lisp.Int(2), lisp.Float(3.0)})
 ```
 
@@ -76,7 +89,7 @@ return QExpr([]*lisp.LVal{lisp.Int(1), lisp.Int(2), lisp.Float(3.0)})
 
 The only false value in the elps language is nil `()`, an empty expression. An LVal can be checked as nil by calling its `IsNil()` method. Instead of calling `IsNil()` to determine the falsehood of a value the True function will determine a value's truth value.
 
-```
+```go
 ok := env.Eval(lisp.SExpr([]*lisp.LVal{"ok?"}))
 if lisp.True(ok) {  // equivalent to !ok.IsNil()
     fmt.Println("ok")
@@ -93,7 +106,7 @@ Additionally, types can be converted from an LVal into a native Go type using th
 
 An application could extract the string "hello" using the following code.
 
-```
+```go
 s, _ := GoString(env.GetGlobal(lisp.Symbol("data")))
 if s != "hello" {
     panic(s)
@@ -108,14 +121,14 @@ These functions for converting types to native values are experimental in nature
 
 To pass a native Go value to lisp code wrap it in a call to `lisp.Native()` so the value can be put into an S-expression.
 
-```
+```go
 lisptime := lisp.Native(time.Now())
     expr := SExpr([]*lisp.LVal{"my-function", lisptime})
 ```
 
 You can then write functions which operate on the value by unboxing the `Native` field of the corresponding argument LVal.
 
-```
+```go
 func builtinPrintTime(env *lisp.LEnv, args *lisp.LVal) *lisp.LVal {
     lisptime := args.Cells[0]
     if lisptime.Type != lisp.LNative {
@@ -132,7 +145,7 @@ func builtinPrintTime(env *lisp.LEnv, args *lisp.LVal) *lisp.LVal {
 
 Lisp code can operate on primitive Go types and structs using the golang package.
 
-```
+```go
 type AppData struct {
     Person struct {
         Name string

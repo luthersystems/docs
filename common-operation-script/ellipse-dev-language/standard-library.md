@@ -10,10 +10,10 @@ description: Reference for builtin functions.
 
 Prints the supplied value(s).
 
-```lisp
-(set 'test (sorted-map "K" "V"))
+```
+elps> (set 'test (sorted-map "K" "V"))
 (sorted-map "K" "V")
-(debug-print "Hello" test)
+elps> (debug-print "Hello" test)
 "Hello" (sorted-map "K" "V")
 ()
 ```
@@ -22,8 +22,8 @@ Prints the supplied value(s).
 
 JSON encodes a value, returning the JSON as a string.
 
-```lisp
-(json:dump-string (sorted-map "K" "V"))
+```
+elps> (json:dump-string (sorted-map "K" "V"))
 "{\"K\":\"V\"}"
 ```
 
@@ -31,10 +31,10 @@ JSON encodes a value, returning the JSON as a string.
 
 JSON encodes a value, returning the JSON as bytes.
 
-```lisp
-(json:dump-bytes (sorted-map "K" "V"))
-; #<bytes 123 34 75 34 58 34 86 34 125>
-(to-string (json:dump-bytes (sorted-map "K" "V")))
+```
+elps> (json:dump-bytes (sorted-map "K" "V"))
+#<bytes 123 34 75 34 58 34 86 34 125>
+elps> (to-string (json:dump-bytes (sorted-map "K" "V")))
 "{\"K\":\"V\"}"
 ```
 
@@ -42,12 +42,12 @@ JSON encodes a value, returning the JSON as bytes.
 
 Converts primitive values to their string representation.
 
-```lisp
-(to-string 1.0)
+```
+elps> (to-string 1.0)
 "1"
-(to-string 1.01)
+elps> (to-string 1.01)
 "1.01"
-(to-string true)
+elps> (to-string true)
 "true"
 ```
 
@@ -55,9 +55,9 @@ Converts primitive values to their string representation.
 
 Converts a string value to bytes.
 
-```lisp
-(to-bytes "ABC123")
-; #<bytes 65 66 67 49 50 51>
+```
+elps> (to-bytes "ABC123")
+#<bytes 65 66 67 49 50 51>
 ```
 
 ### `to-int`
@@ -79,12 +79,12 @@ Converts string digits (\[0-9\]+) and floats to integers. For floats the fractio
 
 Converts strings and integers to floats. Allows floats to pass through.
 
-```lisp
-(to-float "42.2")
+```
+elps> (to-float "42.2")
 42.2
-(to-float 42)
+elps> (to-float 42)
 42
-(to-float -1.23456e+1)
+elps> (to-float -1.23456e+1)
 -12.3456
 ```
 
@@ -92,8 +92,8 @@ Converts strings and integers to floats. Allows floats to pass through.
 
 Returns the first element in a list.
 
-```lisp
-(car '("one" "two" "three"))
+```
+elps> (car '("one" "two" "three"))
 "one"
 ```
 
@@ -101,8 +101,8 @@ Returns the first element in a list.
 
 Returns the list after the first item.
 
-```lisp
-(cdr '("head" "body" "tail"))
+```
+elps> (cdr '("head" "body" "tail"))
 '("body" "tail")
 ```
 
@@ -110,8 +110,8 @@ Returns the list after the first item.
 
 Returns the sequence (list, vector) after the first item.
 
-```lisp
-(rest (vector "one" "two" "three" "four"))
+```
+elps> (rest (vector "one" "two" "three" "four"))
 '("two" "three" "four")
 ```
 
@@ -119,10 +119,10 @@ Returns the sequence (list, vector) after the first item.
 first / second
 ```
 
-```lisp
-(first '("one" "two" "three"))
+```
+elps> (first '("one" "two" "three"))
 "one"
-(second '("one" "two" "three"))
+elps> (second '("one" "two" "three"))
 "two"
 ```
 
@@ -130,12 +130,12 @@ first / second
 
 Gets the nth element of a sequence.
 
-```lisp
-(nth '(1 2 3 4) 0)
+```
+elps> (nth '(1 2 3 4) 0)
 1
-(nth '(1 2 3 4) 3)
+elps> (nth '(1 2 3 4) 3)
 4
-(nth '(1 2 3 4) 4)
+elps> (nth '(1 2 3 4) 4)
 ()
 ```
 
@@ -143,12 +143,12 @@ Gets the nth element of a sequence.
 
 Applies a function to a sequence of values.
 
-```lisp
-(defun cube (v) (* v v v))
+```
+elps> (defun cube (v) (* v v v))
 ()
-(map 'vector cube '(1 2 3 4 5 6))
+elps> (map 'vector cube '(1 2 3 4 5 6))
 (vector 1 8 27 64 125 216)
-(map 'vector (lambda (v) (* v v)) '(1 2 3 4 5 6))
+elps> (map 'vector (lambda (v) (* v v)) '(1 2 3 4 5 6))
 (vector 1 4 9 16 25 36)
 ```
 
@@ -156,16 +156,16 @@ Applies a function to a sequence of values.
 
 Reduces a sequence using an applicator function and with an accumulator, evaluating from the left.
 
-```lisp
-(defun add (x y) (+ x y))
+```
+elps> (defun add (x y) (+ x y))
 ()
-(foldl add 0 '(1 2 3))
+elps> (foldl add 0 '(1 2 3))
 6
-(foldl add 10 '(1 1 1))
+elps> (foldl add 10 '(1 1 1))
 13
-(foldl (lambda (acc v) (assoc! acc (to-string v) v)) (sorted-map) '(1 2 3))
+elps> (foldl (lambda (acc v) (assoc! acc (to-string v) v)) (sorted-map) '(1 2 3))
 (sorted-map "1" 1 "2" 2 "3" 3)
-(foldl - 0 '(1 2 3))
+elps> (foldl - 0 '(1 2 3))
 -6 ; (((0 - 1) - 2) - 3)
 ```
 
@@ -173,8 +173,8 @@ Reduces a sequence using an applicator function and with an accumulator, evaluat
 
 Reduces a sequence using an applicator function and with an accumulator, evaluating from the right.
 
-```lisp
-(foldr - 0 '(1 2 3))
+```
+elps> (foldr - 0 '(1 2 3))
 2 ; (1 - (2 - (3 - 0)))
 ```
 
@@ -182,10 +182,10 @@ Reduces a sequence using an applicator function and with an accumulator, evaluat
 
 Returns a function that is the combination of two functions, with the first function using the product of the second function as its input.
 
-```lisp
-(set 'fn (compose (lambda (a) (+ a 1)) (lambda (b) (+ b 2))))
+```
+elps> (set 'fn (compose (lambda (a) (+ a 1)) (lambda (b) (+ b 2))))
 (lambda (b) (lisp:funcall (lambda (a) (+ a 1)) (lisp:apply (lambda (b) (+ b 2)) b ())))
-(fn 1)
+elps> (fn 1)
 4
 ```
 
@@ -193,21 +193,21 @@ Returns a function that is the combination of two functions, with the first func
 
 Unpack is a special case of apply and is more cumbersome. Instead of using unpack it is better to use apply and funcall.
 
-```lisp
-(unpack (lambda (x y) (+ x y)) '(2 7))
+```
+elps> (unpack (lambda (x y) (+ x y)) '(2 7))
 9
-(unpack (lambda (x y) (+ x y)) '(2 7 6))
-; stdin:1: _fun16: invalid number of arguments: 3
+elps> (unpack (lambda (x y) (+ x y)) '(2 7 6))
+stdin:1: _fun16: invalid number of arguments: 3
 ```
 
 ### `flip`
 
 Returns a function with the parameter order reversed, the input function must have two parameters.
 
-```lisp
-(set 'fn (flip (lambda (x y) (concat 'string x y))))
+```
+elps> (set 'fn (flip (lambda (x y) (concat 'string x y))))
 (lambda (x y) ((lambda (x y) (concat 'string x y)) y x))
-(fn "hello" "world")
+elps> (fn "hello" "world")
 "worldhello"
 ```
 
@@ -215,12 +215,12 @@ Returns a function with the parameter order reversed, the input function must ha
 
 Associates a new key and value to a map, returning a copy without mutating the source map.
 
-```lisp
-(set 'test (sorted-map))
+```
+elps> (set 'test (sorted-map))
 (sorted-map)
-(assoc test "1" 1)
+elps> (assoc test "1" 1)
 (sorted-map "1" 1)
-test
+elps> test
 (sorted-map)
 ```
 
@@ -228,12 +228,12 @@ test
 
 Associates a new key and value to a map, mutating the source map in-place.
 
-```lisp
-(set 'test (sorted-map))
+```
+elps> (set 'test (sorted-map))
 (sorted-map)
-(assoc! test "1" 1)
+elps> (assoc! test "1" 1)
 (sorted-map "1" 1)
-test
+elps> test
 (sorted-map "1" 1)
 ```
 
@@ -241,12 +241,12 @@ test
 
 Dissociate a value from a map via a key, returning a copy without mutating the source map.
 
-```lisp
-(set 'test (sorted-map "A" 1 "B" 2))
+```
+elps> (set 'test (sorted-map "A" 1 "B" 2))
 (sorted-map "A" 1 "B" 2)
-(dissoc test "A")
+elps> (dissoc test "A")
 (sorted-map "B" 2)
-test
+elps> test
 (sorted-map "A" 1 "B" 2)
 ```
 
@@ -254,12 +254,12 @@ test
 
 Dissociate a value from a map via a key, mutating the source map in-place.
 
-```lisp
-(set 'test (sorted-map "A" 1 "B" 2))
+```
+elps> (set 'test (sorted-map "A" 1 "B" 2))
 (sorted-map "A" 1 "B" 2)
-(dissoc! test "A")
+elps> (dissoc! test "A")
 (sorted-map "B" 2)
-test
+elps> test
 (sorted-map "B" 2)
 ```
 
@@ -267,10 +267,10 @@ test
 
 Gets a map value by key.
 
-```lisp
-(set 'test (sorted-map "A" 1 "B" 2))
+```
+elps> (set 'test (sorted-map "A" 1 "B" 2))
 (sorted-map "A" 1 "B" 2)
-(get test "A")
+elps> (get test "A")
 1
 ```
 
@@ -278,10 +278,10 @@ Gets a map value by key.
 
 Returns the key values of a map.
 
-```lisp
-(set 'test (sorted-map "A" 1 "B" 2))
+```
+elps> (set 'test (sorted-map "A" 1 "B" 2))
 (sorted-map "A" 1 "B" 2)
-(keys test)
+elps> (keys test)
 '("A" "B")
 ```
 
@@ -289,12 +289,12 @@ Returns the key values of a map.
 
 Checks if the a key exists in a map.
 
-```lisp
-(set 'test (sorted-map "A" 1 "B" 2))
+```
+elps> (set 'test (sorted-map "A" 1 "B" 2))
 (sorted-map "A" 1 "B" 2)
-(key? test "X")
+elps> (key? test "X")
 false
-(key? test "B")
+elps> (key? test "B")
 true
 ```
 
@@ -302,10 +302,10 @@ true
 
 Concatenates values.
 
-```lisp
-(concat 'string "A" "B" "C")
+```
+elps> (concat 'string "A" "B" "C")
 "ABC"
-(concat 'list '("A" "B" "C") '(1 2 3))
+elps> (concat 'list '("A" "B" "C") '(1 2 3))
 '("A" "B" "C" 1 2 3)
 ```
 
@@ -313,29 +313,29 @@ Concatenates values.
 
 Inserts a value into a sequence at a specific index.
 
-```lisp
-(set 'test '(1 2 3))
+```
+elps> (set 'test '(1 2 3))
 '(1 2 3)
-(insert-index 'list test 0 999)
+elps> (insert-index 'list test 0 999)
 '(999 1 2 3)
-(insert-index 'list test 42 123)
-; stdin:1: lisp:insert-index: index out of bounds
+elps> (insert-index 'list test 42 123)
+stdin:1: lisp:insert-index: index out of bounds
 ```
 
 ### `stable-sort`
 
 Performs a stable sort on a list using a predicate. The last argument can optionally be a function that takes the key and returns the comparison value. Mutates the list in-place.
 
-```lisp
-(set 'test (list 1 2 3))
+```
+elps> (set 'test (list 1 2 3))
 '(1 2 3)
-(stable-sort > test)
+elps> (stable-sort > test)
 '(3 2 1)
-(set 'test (list "C" "B" "A"))
+elps> (set 'test (list "C" "B" "A"))
 '("C" "B" "A")
-(set 'lookup (sorted-map "A" 9 "B" 7 "C" 8))
+elps> (set 'lookup (sorted-map "A" 9 "B" 7 "C" 8))
 (sorted-map "A" 9 "B" 7 "C" 8)
-(stable-sort > test (lambda (key) (get lookup key)))
+elps> (stable-sort > test (lambda (key) (get lookup key)))
 '("A" "C" "B")
 ```
 
@@ -343,10 +343,10 @@ Performs a stable sort on a list using a predicate. The last argument can option
 
 Inserts a value in its sort position.
 
-```lisp
-(set 'test '(1 2 4))
+```
+elps> (set 'test '(1 2 4))
 '(1 2 4)
-(insert-sorted 'list test < 3)
+elps> (insert-sorted 'list test < 3)
 '(1 2 3 4)
 ```
 
@@ -354,10 +354,10 @@ Inserts a value in its sort position.
 
 Search uses binary search to find and return the smallest index i in \[0, n) at which f(i) is true, assuming that on the range \[0, n), f(i) == true implies f(i+1) == true.
 
-```lisp
-(set 'test '(1 2 4))
+```
+elps> (set 'test '(1 2 4))
 '(1 2 4)
-(search-sorted (length test) (lambda (i) (= 4 (nth test i))))
+elps> (search-sorted (length test) (lambda (i) (= 4 (nth test i))))
 2
 ```
 
@@ -365,8 +365,8 @@ Search uses binary search to find and return the smallest index i in \[0, n) at 
 
 Selects values matching the predicate.
 
-```lisp
-(select 'list int? '("A" 1 "B" 2 "C" 3))
+```
+elps> (select 'list int? '("A" 1 "B" 2 "C" 3))
 '(1 2 3)
 ```
 
@@ -374,8 +374,8 @@ Selects values matching the predicate.
 
 Rejects values matching the predicate.
 
-```lisp
-(reject 'list int? '("A" 1 "B" 2 "C" 3))
+```
+elps> (reject 'list int? '("A" 1 "B" 2 "C" 3))
 '("A" "B" "C")
 ```
 
@@ -383,12 +383,12 @@ Rejects values matching the predicate.
 
 Zips one or more lists, composing a list of values from each input list. Tuples length is restricted to the smallest input list length.
 
-```lisp
-(zip 'list '(1 2 3))
+```
+elps> (zip 'list '(1 2 3))
 '('(1) '(2) '(3))
-(zip 'list '(1 2 3) '("A" "B" "C") '(4 5 6))
+elps> (zip 'list '(1 2 3) '("A" "B" "C") '(4 5 6))
 '('(1 "A" 4) '(2 "B" 5) '(3 "C" 6))
-(zip 'list '(1 2 3) '("A" "B" "C") '(4 5))
+elps> (zip 'list '(1 2 3) '("A" "B" "C") '(4 5))
 '('(1 "A" 4) '(2 "B" 5))
 ```
 
@@ -396,12 +396,12 @@ Zips one or more lists, composing a list of values from each input list. Tuples 
 
 Generates a sequence, with an optional step value.
 
-```lisp
-(make-sequence 0 10)
+```
+elps> (make-sequence 0 10)
 '(0 1 2 3 4 5 6 7 8 9)
-(make-sequence 0 10 2)
+elps> (make-sequence 0 10 2)
 '(0 2 4 6 8)
-(make-sequence 0 10 4)
+elps> (make-sequence 0 10 4)
 '(0 4 8)
 ```
 
@@ -417,24 +417,24 @@ Creates a string using format placeholders and values.
 
 Reverses a sequence.
 
-```lisp
-(reverse 'list '(1 2 3))
-; '(3 2 1)
-(reverse 'list (reverse 'list '(1 2 3)))
-; '(1 2 3)
+```
+elps> (reverse 'list '(1 2 3))
+'(3 2 1)
+elps> (reverse 'list (reverse 'list '(1 2 3)))
+'(1 2 3)
 ```
 
 ### `slice`
 
 Returns the sub-slice of a sequence.
 
-```lisp
-(set 'test (make-sequence 0 10))
+```
+elps> (set 'test (make-sequence 0 10))
 '(0 1 2 3 4 5 6 7 8 9)
-(slice 'list test 3 6)
+elps> (slice 'list test 3 6)
 '(3 4 5)
-(slice 'list test 3 0)
-; stdin:1: lisp:slice: end before start
+elps> (slice 'list test 3 0)
+stdin:1: lisp:slice: end before start
 ```
 
 ### `list`
@@ -449,77 +449,77 @@ Returns a list compose of the supplied parameters.
 
 Creates a vector (array) value.
 
-```lisp
+```
+elps> (vector)
 (vector)
-; (vector)
+elps> (vector 1 "2" 'three)
 (vector 1 "2" 'three)
-; (vector 1 "2" 'three)
 ```
 
 ### `append`
 
 Appends to the vector, returning a copy without mutating the source vector.
 
-```lisp
-(set 'test (vector 1 2))
-; (vector 1 2)
-(append 'vector test 3)
-; (vector 1 2 3)
-test
-; (vector 1 2)
+```
+elps> (set 'test (vector 1 2))
+(vector 1 2)
+elps> (append 'vector test 3)
+(vector 1 2 3)
+elps> test
+(vector 1 2)
 ```
 
 ### `append!`
 
 Appends to the vector, mutating the source vector in-place.
 
-```lisp
-(set 'test (vector 1 2))
-; (vector 1 2)
-(append! test 3)
-; (vector 1 2 3)
-test
-; (vector 1 2 3)
+```
+elps> (set 'test (vector 1 2))
+(vector 1 2)
+elps> (append! test 3)
+(vector 1 2 3)
+elps> test
+(vector 1 2 3)
 ```
 
 ### `append-bytes`
 
 Appends to the byte vector, returning a copy without mutating the source vector.
 
-```lisp
-(set 'test (to-bytes "hello world"))
-; #<bytes 104 101 108 108 111 32 119 111 114 108 100>
-(append-bytes! test "!")
-; #<bytes 104 101 108 108 111 32 119 111 114 108 100 33>
-(to-string test)
-; "hello world"
+```
+elps> (set 'test (to-bytes "hello world"))
+#<bytes 104 101 108 108 111 32 119 111 114 108 100>
+elps> (append-bytes! test "!")
+#<bytes 104 101 108 108 111 32 119 111 114 108 100 33>
+elps> (to-string test)
+"hello world"
 ```
 
 ### `append-bytes!`
 
 Appends to the byte vector, mutating the source vector in-place.
 
-```lisp
-(set 'test (to-bytes "hello world"))
-; #<bytes 104 101 108 108 111 32 119 111 114 108 100>
-(append-bytes! test "!")
-; #<bytes 104 101 108 108 111 32 119 111 114 108 100 33>
-(to-string test)
-; "hello world!" ; Note exclamation mark
+```
+elps> (set 'test (to-bytes "hello world"))
+#<bytes 104 101 108 108 111 32 119 111 114 108 100>
+elps> (append-bytes! test "!")
+#<bytes 104 101 108 108 111 32 119 111 114 108 100 33>
+elps> (to-string test)
+"hello world!" ; Note exclamation mark
 ```
 
 ### `aref`
 
 Gets the array element at the given index (counted from zero).
 
-```lisp
-(aref (vector "A" "B" "C") 0)
-; "A"
-(aref (vector "A" "B" "C") 0)
-; "A"
-(aref (vector "A" "B" "C") 2)
-; "C"
-(aref (vector "A" "B" "C") 3)
+```
+elps> (aref (vector "A" "B" "C") 0)
+"A"
+elps> (aref (vector "A" "B" "C") 0)
+"A"
+elps> (aref (vector "A" "B" "C") 2)
+"C"
+elps> (aref (vector "A" "B" "C") 3)
 ; Out of bounds error
 ```
 
@@ -527,119 +527,119 @@ Gets the array element at the given index (counted from zero).
 
 Test all items in a sequence match against a function.
 
-```lisp
-(all? (lambda (x) (> x 0)) '(1 2 3 4 5))
-; true
-(all? (lambda (x) (> x 0)) '(1 2 3 4 -5))
-; false
+```
+elps> (all? (lambda (x) (> x 0)) '(1 2 3 4 5))
+true
+elps> (all? (lambda (x) (> x 0)) '(1 2 3 4 -5))
+false
 ```
 
 ### `any?`
 
 Test if any item in a sequence matches against a function.
 
-```lisp
-(any? string? '(1 2 3 4 5))
-; false
-(any? string? '(1 2 "3" 4 -5))
-; true
+```
+elps> (any? string? '(1 2 3 4 5))
+false
+elps> (any? string? '(1 2 "3" 4 -5))
+true
 ```
 
 ### `true?`
 
 Checks if a value is truthy.
 
-```lisp
-(true? ())
-; false
-(true? "")
-; true
-(true? false)
-; false
-(true? true)
-; true
+```
+elps> (true? ())
+false
+elps> (true? "")
+true
+elps> (true? false)
+false
+elps> (true? true)
+true
 ```
 
 ---
 
 ## Type Checking
 
-```lisp
-(nil? ())
-; true
-(nil? false)
-; false
-(list? '())
-; true
-(list? '(1 2 3))
-; true
-(list? "hello")
-; false
-(sorted-map? (sorted-map "hello" "world"))
-; true
-(sorted-map? "hello world")
-; false
-(array? (vector 1 2))
-; true
-(array? (list 1 2))
-; false
-(vector? (vector 1 2))
-; true
-(vector? (list 1 2))
-; false
-(bool? true)
-; true
-(bool? ())
-; false
-(number? 1.0)
-; true
-(number? 100)
-; true
-(number? "100")
-; false
-(int? 1)
-; true
-(int? -1)
-; true
-(int? -1.0)
-; false
-(float? 1)
-; false
-(float? 1.0)
-; true
-(symbol? 'hi)
-; true
-(symbol? "hi")
-; false
-(string? "")
-; true
-(string? "hi")
-; true
-(string? 'hi)
-; false
-(bytes? "hello")
-; false
-(bytes? (to-bytes "hello"))
-; true
+```
+elps> (nil? ())
+true
+elps> (nil? false)
+false
+elps> (list? '())
+true
+elps> (list? '(1 2 3))
+true
+elps> (list? "hello")
+false
+elps> (sorted-map? (sorted-map "hello" "world"))
+true
+elps> (sorted-map? "hello world")
+false
+elps> (array? (vector 1 2))
+true
+elps> (array? (list 1 2))
+false
+elps> (vector? (vector 1 2))
+true
+elps> (vector? (list 1 2))
+false
+elps> (bool? true)
+true
+elps> (bool? ())
+false
+elps> (number? 1.0)
+true
+elps> (number? 100)
+true
+elps> (number? "100")
+false
+elps> (int? 1)
+true
+elps> (int? -1)
+true
+elps> (int? -1.0)
+false
+elps> (float? 1)
+false
+elps> (float? 1.0)
+true
+elps> (symbol? 'hi)
+true
+elps> (symbol? "hi")
+false
+elps> (string? "")
+true
+elps> (string? "hi")
+true
+elps> (string? 'hi)
+false
+elps> (bytes? "hello")
+false
+elps> (bytes? (to-bytes "hello"))
+true
 ```
 
 ### empty?
 
 Determine if a sequence or string is empty.
 
-```lisp
-(empty? "")
-; true
-(nil? "")
-; false
-(empty? (vector))
-; true
-(empty? (list))
-; true
-(nil? (vector))
-; false
-(nil? (list))
-; true
+```
+elps> (empty? "")
+true
+elps> (nil? "")
+false
+elps> (empty? (vector))
+true
+elps> (empty? (list))
+true
+elps> (nil? (vector))
+false
+elps> (nil? (list))
+true
 ```
 
 ---

@@ -1,7 +1,3 @@
----
-description: 
----
-
 # Best Practices
 
 ## Syle Guidelines

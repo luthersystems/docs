@@ -21,8 +21,8 @@ An example WASM build is available on [github pages](https://luthersystems.githu
 
 ## Build
 
-```
-go get -d ./...
+```sh
+go mod download
 make
 ```
 
@@ -32,7 +32,7 @@ make
 
 Launch an interactive REPL
 
-```
+```sh
 $ elps repl
 > (+ 3 1)
 4
@@ -43,13 +43,13 @@ $
 
 Run a program in a file
 
-```
+```sh
 $ elps run prog.lisp
 ```
 
 Embedded execution in a Go program
 
-```
+```go
 env := lisp.NewEnv(nil)
 env.Reader = parser.NewReader()
 lerr := lisp.InitializeUserEnv(env)

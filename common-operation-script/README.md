@@ -13,6 +13,7 @@ This documentation is organized into several subdirectories, each focused on a c
 - **Key docs:**
 
   - [quickstart/README.md](quickstart/README.md) — Intro to the quickstart series
+  - [quickstart/detailed-setup.md](quickstart/detailed-setup.md) — Editor, formatter and Go module setup
   - [quickstart/local-system-requirements.md](quickstart/local-system-requirements.md) — Required tools/software
   - [quickstart/run-your-first-network.md](quickstart/run-your-first-network.md) — Step-by-step network setup
   - [quickstart/add-your-first-endpoint.md](quickstart/add-your-first-endpoint.md), [quickstart/update-your-data-model.md](quickstart/update-your-data-model.md) — Extending your app

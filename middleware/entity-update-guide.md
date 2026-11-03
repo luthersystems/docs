@@ -36,7 +36,7 @@ This is a breaking change. This includes changing the type of a field.
 
 The API is defined using protobuf v3 and the spec is under the `api` dir.
 
-To add a field, you need to update .`/pb/oracle.proto` with the correct field type and a unique field number. Careful not to use an existing field number or one `reserved`.
+To add a field, you need to update `./pb/oracle.proto` with the correct field type and a unique field number. Careful not to use an existing field number or one `reserved`.
 
 To remove a field, you also need to specify the field number (and/or name) as `reserved`. This will make the protobuf compiler to complain if a developer tries to use the same numbers in the future.
 
