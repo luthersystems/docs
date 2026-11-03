@@ -4,7 +4,9 @@ Welcome to the documentation hub for the Luther Platform!
 
 This repository provides comprehensive guides, language references, onboarding information, connector details, middleware integration, and more to support users and developers working with the Luther Platform.
 
-The same guides are published at [docs.luthersystems.com](https://docs.luthersystems.com), where the ELPS examples run in your browser. That site is the source the pages here are synced from, so a page here can lag behind it; when the two differ, docs.luthersystems.com is current.
+The same guides are published at [docs.luthersystems.com](https://docs.luthersystems.com), where the ELPS examples run in your browser. That site is where the guides are edited. Each merge there regenerates the pages listed in [`.site-sync/manifest.json`](.site-sync/manifest.json) and opens a "Sync the guides" PR here, so the two copies stay the same.
+
+To change one of those pages, edit it in [luthersystems/frontpage-docs](https://github.com/luthersystems/frontpage-docs) `src/content`, not here: a hand edit here would be lost at the next sync, and the site sync guard check refuses it. The other pages (this README, the section indexes, onboarding, FAQ, glossary) are edited here.
 
 ---
 

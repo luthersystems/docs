@@ -33,6 +33,9 @@ This documentation is organized into several subdirectories, each focused on a c
   - [ellipse-dev-language/let-destructuring.md](ellipse-dev-language/let-destructuring.md) — Binding patterns in `let`, `let*` and `defun` (ELPS v1.93.0 and later)
   - [ellipse-dev-language/schema.md](ellipse-dev-language/schema.md) — Validate the type and shape of data with the `schema` package
   - [ellipse-dev-language/records.md](ellipse-dev-language/records.md) — Record types and interfaces (ELPS v1.95.0 and later)
+  - [ellipse-dev-language/errors.md](ellipse-dev-language/errors.md) — Raise, catch, group and re-raise errors
+  - [ellipse-dev-language/copying.md](ellipse-dev-language/copying.md) — Which functions change a value in place, and when to copy
+  - [ellipse-dev-language/json.md](ellipse-dev-language/json.md) — How ELPS reads and writes JSON
   - [ellipse-dev-language/ellipse-testing.md](ellipse-dev-language/ellipse-testing.md) — Testing scripts
   - [automated-migrations.md](automated-migrations.md) — Library for running very large migrations of data in your common operations script.
 

@@ -1,0 +1,25 @@
+name: Site sync guard
+
+# Refuse a hand edit to a page generated from docs.luthersystems.com. The
+# reason and the list of generated pages are in scripts/site-sync-guard.sh.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Check for edits to generated pages
+        env:
+          BASE: origin/${{ github.base_ref }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: scripts/site-sync-guard.sh "$BASE" "$HEAD_BRANCH"
