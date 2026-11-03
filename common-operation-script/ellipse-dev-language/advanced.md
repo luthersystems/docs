@@ -8,7 +8,7 @@ To initialize a new environment set its Reader and load the packages you that wa
 
 ```go
 env := lisp.NewEnv(nil)
-env.Reader = parser.NewReader()
+env.Runtime.Reader = parser.NewReader()
 lerr := lisp.InitializeUserEnv(env)
 if !lerr.IsNil() {
    log.Panicf("initialization error: %v", lerr)
@@ -32,20 +32,16 @@ if ret.Type == lisp.LError {
 }
 ```
 
----
-
-## Loading parsed code more than once
-
-`lisp.TextLoader` parses the source one time and returns a loader. Call the loader once for each environment that needs the code, so the source is not parsed again each time.
+Instead of repeatedly parsing code, the TextLoader function can return a function that efficiently loads parsed expressions multiple times.
 
 ```go
-load, err := lisp.TextLoader(parser.NewReader(), "code.lisp", strings.NewReader(lispcode))
+fn, err := lisp.TextLoader(parser.NewReader(), "code.lisp", strings.NewReader(lispcode))
 if err != nil {
-    // handle a parse error
+    // handle parse error
 }
-ret := load(env)
-if ret.Type == lisp.LError {
-    // handle an error
+lerr := fn(env)
+if lerr.Type == lisp.LError {
+    // handle execution error
 }
 ```
 

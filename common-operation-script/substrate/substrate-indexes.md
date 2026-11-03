@@ -18,7 +18,7 @@ Functions
 
 `'enumerate` returns a vector of 2 elements: a list of items and an empty bookmark. This can also take a filter.
 
-```lisp
+```
 shiro> (let* ([tms1 (storage-tomulset-index "test1")]
               [tms2 (storage-tomulset-index "test2")])
          (tms1 'put "A" 1)
@@ -70,7 +70,7 @@ shiro> (let* ([tms1 (storage-tomulset-index "test1")]
 
 `'page` takes a page size + filter and returns a vector of 2 elements: a list of items and a bookmark of the last item accessed. To access the next group of items, provide the bookmark to the `storage-toset-next-iters` function.
 
-```lisp
+```
 shiro> (let* ([tms1 (storage-tomulset-index "test1")]
               [tms2 (storage-tomulset-index "test2")])
          (tms1 'put "A" 1)
@@ -219,7 +219,7 @@ The choice of parameter doesn't depend much on the query size. The choice of par
 
 `'put` inserts a given item into the tomulset of a provided key.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "A" 1)
          (tms 'put "A" 2)
@@ -229,7 +229,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'del` deletes a given element from a provided key.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "A" 1)
          (tms 'put "A" 2)
@@ -240,7 +240,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'has?` returns true if a provided key is in the tomulset, false otherwise.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "A" 1)
          (tms 'put "A" 2)
@@ -256,7 +256,7 @@ false
 
 `'count` returns the number of items of a provided key.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "A" 1)
          (tms 'put "A" 2)
@@ -266,7 +266,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'page` pages forward the tomulset with a given filter, bookmark, and page size.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "X" "X1")
          (tms 'put "X" "X2")
@@ -283,7 +283,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'page-back` pages backward the tomulset with a given filter, bookmark, and page size.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "X" "X1")
          (tms 'put "X" "X2")
@@ -300,7 +300,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'enumerate` returns the entire list of items of a provided tomulset ket.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "A" 1)
          (tms 'put "A" 2)
@@ -310,7 +310,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'dump` evaluates to the DB key/value pairs that define the tomulset contents.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "X" "X1")
          (tms 'put "X" "X2")
@@ -320,7 +320,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'free` deletes the entire tomulset for the given key.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "A" 1)
          (tms 'put "A" 2)
@@ -331,7 +331,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'next-iter` creates an iterator for the given key, can be used with `'page` and `'enumerate`.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "X" "X1")
          (tms 'put "X" "X2")
@@ -341,7 +341,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'prev-iter` creates an iterator that goes backwards for the given key, can be used with `'page` and `'enumerate`.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "X" "X1")
          (tms 'put "X" "X2")
@@ -351,7 +351,7 @@ shiro> (let* ([tms (storage-tomulset-index "test")])
 
 `'get-set` makes a toset provided a key to the tomulset.
 
-```lisp
+```
 shiro> (let* ([tms (storage-tomulset-index "test")])
          (tms 'put "A" 1)
          (tms 'put "A" 2)

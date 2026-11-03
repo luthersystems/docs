@@ -32,7 +32,7 @@ To run all the tests in one or more test files, run:
 $(make echo:SHIRO_TEST) *_test.lisp [...]
 ```
 
-To run specific tests with a regex, use `--run` which has 'go test -run' semantics ([subtests](https://pkg.go.dev/testing#hdr-Subtests_and_Sub_benchmarks)). E.g.,
+To run specific tests with a regex, use `--run` which has 'go test -run' semantics ([go test flags](https://pkg.go.dev/cmd/go#hdr-Testing_flags)). E.g.,
 
 ```
 phylum❯ $(make echo:SHIRO_TEST) --run "/regulating"

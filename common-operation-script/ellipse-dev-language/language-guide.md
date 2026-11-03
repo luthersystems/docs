@@ -8,7 +8,7 @@ Lisp code interpreted by elps is given as a sequences of expressions encoded as 
 
 ## Expressions
 
-An expression is either an atom or a sequence of expressions delimited by parenthesis `(...)`. An environment evaluates one expression at a time, evaluating each sub-expression before evaluating the main expression. Expressions may also be quoted by prefixing it with an single quote `'`. Quoted expressions are discussed in depth along with [expression evaluation](#expression-evaluation).
+An expression is either an atom or a sequence of expressions delimited by parenthesis `(...)`. An environment evaluates one expression at a time, evaluating each sub-expression before evaluating the main expression. Expressions may also be quoted by prefixing it with a single quote `'`. Quoted expressions are discussed in depth along with [expression evaluation](#expression-evaluation).
 
 ---
 
@@ -28,6 +28,18 @@ Numbers can be either int or floating point and will be converted between the tw
 
 Strings are a sequence of utf-8 text delimited by double quotes `"`. Strings cannot contain line breaks. A codepoint in a string may be escaped with a preceding backslash `\`.
 
+Raw strings use triple double quotes (`"""text"""`), may span lines, and do not interpret backslash escapes. They are useful for JSON in examples and tests.
+
+---
+
+### Keywords
+
+A symbol with a leading colon, such as `:urgent`, is a *keyword*. Its type is `symbol`. A keyword evaluates to itself and cannot hold a value, so `(set ':k 1)` is an error. Keywords label [keyword arguments](#keyword-arguments) and are useful as fixed labels in data.
+
+```lisp
+(list :urgent (type :urgent) (equal? :urgent :urgent))  ; evaluates to '(:urgent 'symbol true)
+```
+
 ---
 
 ## Expression Evaluation
@@ -38,7 +50,7 @@ The empty expression () is a special expression called "nil" and evaluates to it
 
 ### Atomic Expressions
 
-Symbols evaluate to the last value bound to that symbol at the deepest [scope](#scope) at which that symbol is bound. Numbers and strings evaluate to themselves.
+Symbols evaluate to the last value bound to that symbol at the deepest scope at which that symbol is bound. Numbers and strings evaluate to themselves.
 
 ### Quoted Expressions
 
@@ -64,7 +76,7 @@ A function is a symbolic expression that utilizes some number of unbound argumen
 (lambda (x) (- x))
 ```
 
-The above expression evaluates to an anonymous function (a lambda function) which has one argument `x` and evaluates to the expression `(- x)` when x is bound to a value through [expression evaluation](#expression-evaluation).
+The above expression evaluates to an anonymous function (a lambda function) which has one argument x and evaluates to the expression `(- x)` when `x` is bound to a value through [expression evaluation](#expression-evaluation).
 
 ```lisp
 ((lambda (x) (- x)) 3)  ; evaluates to -3
@@ -232,6 +244,38 @@ For example,
 The value returned by `cond` is computed as follows: if condition1 is `true?`, then return result1; else if condition2 is `true?` then return result2; else if ...; else return resultN.
 
 If none of the conditions are true (and there is no :else), then `()` is returned.
+
+### when, unless, while and default
+
+```lisp
+(when test body...)       ; if test is true, the value of the last body form, else ()
+(unless test body...)     ; if test is false, the value of the last body form, else ()
+(while test body...)      ; run body while test is true; returns ()
+(default value fallback)  ; value, or fallback when value is ()
+```
+
+`default` returns `false`, `0` and `""` as they are. It uses `fallback` only for `()`, so it is a good way to give a missing JSON field a value.
+
+```lisp
+(set 'request (sorted-map "amount" 120))
+
+(list (default (get request "currency") "GBP")
+      (when (> (get request "amount") 100) 'review)
+      (unless (key? request "note") 'no-note))  ; evaluates to '("GBP" 'review 'no-note)
+```
+
+### dotimes
+
+`(dotimes (i count) body...)` runs the body `count` times, with `i` set to 0, 1, and so on.
+
+```lisp
+(let ([schedule (vector)])
+  (dotimes (month 3)
+    (append! schedule (list (+ month 1) 250)))
+  schedule)  ; evaluates to (vector '(1 250) '(2 250) '(3 250))
+```
+
+All the iterations share one `i`. A function made in the body sees the last value of `i`, not the value when it was made. To keep each value, bind it in a `let` inside the body. The lint check `loop-variable-capture` reports this mistake.
 
 ### let vs let\*
 
@@ -644,5 +688,13 @@ The `schema` package (`s:`) checks data and defines record types.
 
 - [Validating Data](schema.md): validators check the type and shape of a value, for example a JSON request.
 - [Records and Interfaces](records.md): record types keep data and the methods that change it together, and check every change.
+
+---
+
+## More on the Language
+
+- [Working with JSON](json.md): how numbers, `null` and keys convert, canonical JSON for hashes, and typed JSON.
+- [Copying and Mutation](copying.md): which functions change a value in place, and when to copy.
+- [Errors and Conditions](errors.md): condition groups, which handler runs, and `rethrow`.
 
 ---

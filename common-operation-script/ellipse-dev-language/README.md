@@ -51,7 +51,7 @@ Embedded execution in a Go program
 
 ```go
 env := lisp.NewEnv(nil)
-env.Reader = parser.NewReader()
+env.Runtime.Reader = parser.NewReader()
 lerr := lisp.InitializeUserEnv(env)
 if !lerr.IsNil() {
    log.Panicf("initialization error: %v", lerr)

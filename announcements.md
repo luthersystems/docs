@@ -1,6 +1,4 @@
-# Major Platform Release Announcements
-
-## Major Platform Release Announcement: v3.0.0 Enhancing Security and Performance
+# Major Platform Release Announcement: v3.0.0 Enhancing Security and Performance
 
 **Release Date**: September 1st, 2024
 

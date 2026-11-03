@@ -44,7 +44,7 @@ NB: It is best to setup Git LFS before running this script (see above for inform
 
 ### Formatting and linting
 
-We recommend using [yasi](https://pypi.org/project/yasi/) for formatting lisp files. You can install it by running: `pip3 install --upgrade yasi` We use a specific [configuration file](https://github.com/luthersystems/sandbox/blob/main/.yasirc.json) and run it with the following flags to ensure we format consistently across the team:
+We recommend using [yasi](https://pypi.org/project/yasi/) for formatting lisp files. You can install it by running: `pip3 install --upgrade yasi` We use a specific [configuration file](https://github.com/luthersystems/sandbox/blob/main/phylum/.yasirc.json) and run it with the following flags to ensure we format consistently across the team:
 
 ```
 yasi --no-exit --no-backup --no-warning --no-output --indent-comments --uniform --default-indent 2 --dialect clojure <file>
@@ -112,7 +112,7 @@ The oracle then cracks open that JWT and inspects the issuer (iss) and subject (
 
 The oracle will query the blockchain for the AuthenticationProvider settings for the specified issuer ("iss"). If the JWT validates, then the token is included in a transaction as transient data, and further on-chain validation looks up the corresponding user using the (issuer "iss", subject "sub") pair, and confirms that the user indeed has specified that AuthenticationProvider as part of their UserAuthentication. The AuthenticationProvider settings may also specify an "audience" field which is a constant that is used to compare against the "aud" claim in the token. This mechanism allows the IDP to generate tokens only to be used for a single service.
 
-For a complete description of JWTs and these claims, see [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519).
+For a complete description of JWTs and these claims, see [RFC 7519](https://www.rfc-editor.org/rfc/rfc7519).
 
 All requests must specify an integration API Key using the "X-API-Key" header.
 
@@ -211,8 +211,9 @@ Edit `SUBSTRATE_VERSION` in `common.mk`.
 ## Go mod
 
 ```
+export GO111MODULE=on
 git config --global url."git@github.com:".insteadOf "https://github.com/"
-go env -w GOPRIVATE=github.com/luthersystems/*
+go env -w GOPRIVATE=github.com/luthersystems
 ```
 
 ---

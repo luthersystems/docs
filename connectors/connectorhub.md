@@ -1,8 +1,6 @@
 ---
-description: "ConnectorHub – Reliably connects automated business processes to external systems like email, databases, and payment providers."
+description: ConnectorHub – Reliably connects automated business processes to external systems like email, databases, and payment providers.
 ---
-
-# Connector Hub
 
 # ConnectorHub Overview
 
@@ -996,5 +994,4 @@ general_settings:
     receipt_url:"https://mock.stripe.com/receipt"
     ```
 
-*For full setup instructions & API reference, see:*
-[https://dev.luthersystems.com/connectors?connector=stripe](https://dev.luthersystems.com/connectors?connector=stripe)
+*For the Stripe API reference, see the [Stripe Charges API](https://docs.stripe.com/api/charges).*

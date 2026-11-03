@@ -1,5 +1,5 @@
 ---
-description: "This is a guide on how to add, remove fields including enum values from the Oracle API."
+description: This is a guide on how to add, remove fields including enum values from the Oracle API.
 ---
 
 # API Update Guide

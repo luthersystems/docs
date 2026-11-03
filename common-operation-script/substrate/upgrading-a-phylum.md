@@ -4,8 +4,6 @@ description: Changes a phylum needs before it runs on a newer substrate release,
 
 # Upgrading a Phylum
 
-# Upgrading a Phylum
-
 Make these changes to your phylum before you upgrade substrate. Each section
 gives the error you see, the fix, the first release that needs the fix, and
 whether the fix also works on older releases. Every fix on this page except

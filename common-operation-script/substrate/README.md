@@ -323,23 +323,78 @@ Transaction metadata is stored in the state database under the transaction ID (s
 
 `(defun log-metrics ()` Log the transaction's storage metrics, such as the number of keys read and written, at `level=info`. The message is `storage-metrics`. Substrate writes this line itself after a storage operation fails. The function is not exported, so a phylum does not need to call it.
 
-### base64 Package
+### Encoding packages
 
-`(defun encode (data)` Return a base64 encoded string of `data`, where `data` is type byte or string.
+Each of these packages has `encode` and `decode`. `encode` takes a string or bytes. Both functions return bytes, so use `to-string` to get a string.
 
-`(defun decode (data)` Base64 decode string data and return decoded bytes.
+| Package | Encoding |
+|---|---|
+| `base64` | Standard base64. See also [base64](../ellipse-dev-language/standard-library.md#base64) in the Standard Library |
+| `base64url` | URL-safe base64 |
+| `base32` | Base32 |
+| `base58` | Base58 |
+| `hex` | Lowercase hexadecimal |
 
-### hex Package
-
-`(defun encode (data)` Return a hex encoded string of `data`, where data is type byte or string.
-
-`(defun decode (data)` Hex decode string `data` and return decoded bytes.
+```lisp
+(to-string (hex:encode "hi"))          ; "6869"
+(to-string (hex:decode "6869"))        ; "hi"
+(to-string (base64url:encode "a?b"))   ; "YT9i"
+```
 
 ### crypto Package
 
-`(defun sha512-digest (data)` Return the `sha512` digest bytes of string or bytes `data`.
+`(defun sha256-digest (message)` Return the SHA-256 digest of `message` (a string or bytes) as bytes.
 
-`(defun sha256-digest (data)` Return the `sha256` digest bytes of string or bytes `data`.
+`(defun sha512-digest (message)` Return the SHA-512 digest of `message` (a string or bytes) as bytes.
+
+`(defun aes256-gcm-encrypt (key nonce plaintext)` Encrypt `plaintext` with AES-256-GCM, a 32-byte `key` and a 12-byte `nonce`. Return the nonce, the ciphertext and the tag together, as bytes.
+
+`(defun aes256-gcm-decrypt (key ciphertext)` Decrypt the output of `aes256-gcm-encrypt` with the same 32-byte `key`. The nonce is the first 12 bytes of `ciphertext`.
+
+`(defun aes256-encrypt (key iv message)` Encrypt `message` with AES-256-CFB, a 32-byte `key` and a 16-byte `iv`. Return the IV and the ciphertext together, as bytes. Use AES-256-GCM for new code: CFB does not detect a change to the ciphertext.
+
+`(defun aes256-decrypt (key message)` Decrypt the output of `aes256-encrypt`. The IV is the first 16 bytes of `message`.
+
+Every endorser runs the transaction, so a key or nonce cannot come from a random source on the peer. Take it from the transaction, for example from transient data, or from the transaction's [CSPRNG](#cc-package).
+
+```lisp
+(set 'digest (to-string (hex:encode (crypto:sha256-digest "claim c-1"))))
+```
+
+### compress Package
+
+`(defun zlib-compress (message)` Compress `message` (bytes) with zlib and return the compressed bytes.
+
+`(defun zlib-decompress (message)` Decompress zlib bytes and return the original bytes.
+
+### csv Package
+
+`(defun pack-csv (rows)` Return `rows` as one CSV string. `rows` is a list or vector, and each row is a list or vector of strings.
+
+```lisp
+(csv:pack-csv (list (list "id" "amount") (list "c-1" "2500")))
+; "id,amount\nc-1,2500\n"
+```
+
+### dates Package
+
+`(defun ymd-between-dates (lo hi)` Return the difference between two `YYYY-MM-DD` date strings as a vector of years, months and days. `lo` must not be after `hi`.
+
+```lisp
+(dates:ymd-between-dates "2024-01-31" "2025-03-01")  ; (vector 1 0 29)
+```
+
+### url Package
+
+`(defun parse-request-uri (url)` Parse a URL string. Return a sorted map with the keys `scheme`, `opaque`, `host`, `path`, `raw-path`, `force-query`, `raw-query` and `fragment`.
+
+### duration Package
+
+`(defun wrap (label fn)` Call `fn` with no arguments, return its result, and record the time it took, in milliseconds, in a Prometheus histogram under `label`. Use it to measure a slow part of an endpoint.
+
+### decimal Package
+
+See [Decimals](decimals.md).
 
 ### elpspath Package
 
