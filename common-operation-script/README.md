@@ -13,6 +13,7 @@ This documentation is organized into several subdirectories, each focused on a c
 - **Key docs:**
 
   - [quickstart/README.md](quickstart/README.md) — Intro to the quickstart series
+  - [quickstart/detailed-setup.md](quickstart/detailed-setup.md) — Editor, formatter and Go module setup
   - [quickstart/local-system-requirements.md](quickstart/local-system-requirements.md) — Required tools/software
   - [quickstart/run-your-first-network.md](quickstart/run-your-first-network.md) — Step-by-step network setup
   - [quickstart/add-your-first-endpoint.md](quickstart/add-your-first-endpoint.md), [quickstart/update-your-data-model.md](quickstart/update-your-data-model.md) — Extending your app
@@ -28,8 +29,15 @@ This documentation is organized into several subdirectories, each focused on a c
   - [ellipse-dev-language/language-guide.md](ellipse-dev-language/language-guide.md) — Syntax, structure, and idioms
   - [ellipse-dev-language/standard-library.md](ellipse-dev-language/standard-library.md) — Available functions/utilities
   - [ellipse-dev-language/advanced.md](ellipse-dev-language/advanced.md) — Advanced topics
+  - [ellipse-dev-language/pattern-matching.md](ellipse-dev-language/pattern-matching.md) — `match`: branch on the shape of a value (ELPS v1.93.0 and later)
+  - [ellipse-dev-language/let-destructuring.md](ellipse-dev-language/let-destructuring.md) — Binding patterns in `let`, `let*` and `defun` (ELPS v1.93.0 and later)
+  - [ellipse-dev-language/schema.md](ellipse-dev-language/schema.md) — Validate the type and shape of data with the `schema` package
+  - [ellipse-dev-language/records.md](ellipse-dev-language/records.md) — Record types and interfaces (ELPS v1.95.0 and later)
+  - [ellipse-dev-language/errors.md](ellipse-dev-language/errors.md) — Raise, catch, group and re-raise errors
+  - [ellipse-dev-language/copying.md](ellipse-dev-language/copying.md) — Which functions change a value in place, and when to copy
+  - [ellipse-dev-language/json.md](ellipse-dev-language/json.md) — How ELPS reads and writes JSON
   - [ellipse-dev-language/ellipse-testing.md](ellipse-dev-language/ellipse-testing.md) — Testing scripts
-  - [ellipse-dev-language/automated-migrations.md](ellipse-dev-language/automated-migrations.md) — Library for running very large migrations of data in your common operations script.
+  - [automated-migrations.md](automated-migrations.md) — Library for running very large migrations of data in your common operations script.
 
 ## Substrate Engine
 
@@ -38,6 +46,8 @@ This documentation is organized into several subdirectories, each focused on a c
 - **Key docs:**
 
   - [substrate/README.md](substrate/README.md) — Substrate architecture
+  - [substrate/upgrading-a-phylum.md](substrate/upgrading-a-phylum.md) — What to change in a phylum when you upgrade substrate
+  - [substrate/chaincode-environment-variables.md](substrate/chaincode-environment-variables.md) — The `SUBSTRATE_*` settings for the chaincode
   - [substrate/decimals.md](substrate/decimals.md), [substrate/elpspath.md](substrate/elpspath.md), [substrate/substrate-indexes.md](substrate/substrate-indexes.md), [substrate/substrate-utilities.md](substrate/substrate-utilities.md), [substrate/templates.md](substrate/templates.md) — Specialized guides and APIs
 
 ## Development Guidelines

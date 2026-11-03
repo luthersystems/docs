@@ -4,12 +4,19 @@ Welcome to the documentation hub for the Luther Platform!
 
 This repository provides comprehensive guides, language references, onboarding information, connector details, middleware integration, and more to support users and developers working with the Luther Platform.
 
+The same guides are published at [docs.luthersystems.com](https://docs.luthersystems.com), where the ELPS examples run in your browser. That site is where the guides are edited. Each merge there regenerates the pages listed in [`.site-sync/manifest.json`](.site-sync/manifest.json) and opens a "Sync the guides" PR here, so the two copies stay the same.
+
+To change one of those pages, edit it in [luthersystems/frontpage-docs](https://github.com/luthersystems/frontpage-docs) `src/content`, not here: a hand edit here would be lost at the next sync, and the site sync guard check refuses it. The other pages (this README, the section indexes, onboarding, FAQ, glossary) are edited here.
+
 ---
 
 ## Top-Level Documentation
 
 - [README.md](README.md): Repo and docs overview
-- [announcements.md](announcements.md): Latest announcements, release notes, and updates
+- [release-notes.md](release-notes.md): Release notes for substrate, ELPS and the other platform components
+- [announcements.md](announcements.md): Major platform release announcements
+- [security-notice-emsign.md](security-notice-emsign.md): Security notice for the eMudhra (emSign) CA distrust, and the image versions to use
+- [known-issues.md](known-issues.md): Known issues and their workarounds
 - [faq.md](faq.md): Frequently asked questions
 - [glossary.md](glossary.md): Glossary of key terms used throughout the platform
 - [contact-us.md](contact-us.md): How to reach support or provide feedback

@@ -1,0 +1,36 @@
+name: Security
+
+# The org's shared security checks (gitleaks, osv-scanner and the rest) from
+# luthersystems/.github. An org ruleset requires their one check,
+# "security / result", on every PR to main, so a PR here cannot merge
+# without this workflow.
+#
+# Why push on site-sync too: the sync PR is opened by this repo's
+# GITHUB_TOKEN (site-sync-pr.yml), and GitHub runs no pull_request workflow
+# for a PR that token opens. The push run reports its check on the same
+# commit, so the sync PR still gets "security / result".
+
+on:
+  merge_group:
+  pull_request:
+  push:
+    branches: [main, site-sync]
+  schedule:
+    # Finds advisories published after the last change.
+    - cron: "41 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # The job id must stay "security": the ruleset requires "security / result".
+  security:
+    permissions:
+      contents: read
+      issues: write # the security-drift issue on scheduled runs
+    uses: luthersystems/.github/.github/workflows/security.yml@v1

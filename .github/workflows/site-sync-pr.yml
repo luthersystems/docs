@@ -1,0 +1,35 @@
+name: Site sync PR
+
+# Open the PR for a sync from docs.luthersystems.com.
+#
+# luthersystems/frontpage-docs regenerates this repo's guides on each merge
+# there and force-pushes the result to the site-sync branch here (see its
+# .github/workflows/docs-repo-sync.yml). A token from that repository cannot
+# open a PR in this one, so this workflow does it with this repository's own
+# token. It needs "Allow GitHub Actions to create and approve pull requests"
+# on this repo (common-infrastructure github-org/workflow_permissions.json).
+# It never approves or merges: a person reviews each sync.
+
+on:
+  push:
+    branches: [site-sync]
+
+concurrency:
+  group: site-sync-pr
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: site-sync
+      - name: Open, update or close the sync PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/site-sync-pr.sh

@@ -62,17 +62,17 @@ elps> (to-bytes "ABC123")
 
 ### `to-int`
 
-Converts string digits (\[0-9]+) and floats to integers. For floats the fractional part is discarded. Allows integer to pass through.
+Converts string digits (\[0-9\]+) and floats to integers. For floats the fractional part is discarded. Allows integer to pass through.
 
-```
-elps> (to-int "42")
-42
-elps> (to-int 42)
-42
-elps> (to-int 42.9)
-42
-elps> (to-int "4.2")
-// ERROR
+```lisp
+(to-int "42")
+; 42
+(to-int 42)
+; 42
+(to-int 42.9)
+; 42
+(to-int "4.2")
+; ERROR
 ```
 
 ### `to-float`
@@ -115,7 +115,9 @@ elps> (rest (vector "one" "two" "three" "four"))
 '("two" "three" "four")
 ```
 
-### `first` / `second`
+```
+first / second
+```
 
 ```
 elps> (first '("one" "two" "three"))
@@ -325,11 +327,11 @@ stdin:1: lisp:insert-index: index out of bounds
 Performs a stable sort on a list using a predicate. The last argument can optionally be a function that takes the key and returns the comparison value. Mutates the list in-place.
 
 ```
-elps> (set 'test '(1 2 3))
+elps> (set 'test (list 1 2 3))
 '(1 2 3)
 elps> (stable-sort > test)
 '(3 2 1)
-elps> (set 'test '("C" "B" "A"))
+elps> (set 'test (list "C" "B" "A"))
 '("C" "B" "A")
 elps> (set 'lookup (sorted-map "A" 9 "B" 7 "C" 8))
 (sorted-map "A" 9 "B" 7 "C" 8)
@@ -407,9 +409,8 @@ elps> (make-sequence 0 10 4)
 
 Creates a string using format placeholders and values.
 
-```
-elps> (format-string "Hello {}, {} you?" "World" "how are")
-"Hello World, how are you?"
+```lisp
+(format-string "Hello {}, {} you?" "World" "how are")
 ```
 
 ### `reverse`
@@ -440,9 +441,8 @@ stdin:1: lisp:slice: end before start
 
 Returns a list compose of the supplied parameters.
 
-```
-elps> (list "A" 123 456 "B" '(0 1 2))
-'("A" 123 456 "B" '(0 1 2))
+```lisp
+(list "A" 123 456 "B" '(0 1 2))
 ```
 
 ### `vector`
@@ -560,6 +560,8 @@ elps> (true? true)
 true
 ```
 
+---
+
 ## Type Checking
 
 ```
@@ -638,4 +640,78 @@ elps> (nil? (vector))
 false
 elps> (nil? (list))
 true
+```
+
+---
+
+## math
+
+The `math` package has number functions and constants. Write each name with the `math:` prefix.
+
+| Name | Returns |
+|---|---|
+| `(math:abs n)` | The absolute value of `n` |
+| `(math:floor n)`, `(math:ceil n)` | `n` rounded down, or up, to an int |
+| `(math:sqrt n)` | The square root of `n` |
+| `(math:exp n)`, `(math:ln n)` | e to the power `n`, and the natural logarithm of `n` |
+| `(math:log base n)` | The logarithm of `n` to `base` |
+| `(math:sin r)`, `(math:cos r)`, `(math:tan r)` | Trigonometric functions of `r` radians. `asin`, `acos`, `atan` and the hyperbolic forms `sinh`, `cosh`, `tanh`, `asinh`, `acosh`, `atanh` are also available |
+| `(math:nan? n)` | `true` when `n` is not a number (NaN) |
+| `math:pi`, `math:inf`, `math:-inf` | The constants pi, positive infinity and negative infinity |
+
+These functions use floating-point numbers. Do not use them for money: use the [decimal](../substrate/decimals.md) functions.
+
+```lisp
+(defun instalments (total)
+  ; Split a total into equal payments of at most 250.
+  (let ([count (math:ceil (/ total 250.0))])
+    (list count (/ total count))))
+
+(list (instalments 1000)
+      (math:abs -42)
+      (math:floor 2.7)
+      (math:sqrt 16))  ; evaluates to '('(4 250) 42 2 4)
+```
+
+---
+
+## regexp
+
+The `regexp` package matches text against regular expressions. The pattern syntax is the [Go RE2 syntax](https://github.com/google/re2/wiki/Syntax).
+
+| Name | Returns |
+|---|---|
+| `(regexp:regexp-compile pattern)` | A compiled regular expression. A bad pattern raises an error |
+| `(regexp:regexp-match? re text)` | `true` when `text` contains a match for `re` |
+| `(regexp:regexp-pattern re)` | The pattern string of `re` |
+| `(regexp:regexp? value)` | `true` when `value` is a compiled regular expression |
+
+Compile a pattern one time, at the top level of a file, and use it many times. To check a field of a request, you can also use the [`s:regexp`](schema.md#constraints) constraint.
+
+```lisp
+(set 'invoice-number (regexp:regexp-compile "^INV-[0-9]{4}$"))
+
+(map 'list
+     (lambda (s) (regexp:regexp-match? invoice-number s))
+     (list "INV-0042" "inv-0042" "INV-42"))  ; evaluates to '(true false false)
+```
+
+`regexp-match?` finds a match anywhere in the text. Use `^` and `$` to match the whole text.
+
+---
+
+## base64
+
+The `base64` package encodes bytes as base64 text and decodes it. Both functions return bytes. Use `to-string` to get a string.
+
+| Name | Returns |
+|---|---|
+| `(base64:encode data)` | The base64 encoding of `data` (a string or bytes), as bytes |
+| `(base64:decode text)` | The bytes that `text` encodes. Text that is not base64 raises an error |
+
+```lisp
+(set 'encoded (to-string (base64:encode (json:dump-string (sorted-map "claim_id" "c-1")))))
+
+(list encoded
+      (json:load-bytes (base64:decode encoded)))
 ```

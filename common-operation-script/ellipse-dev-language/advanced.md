@@ -8,10 +8,10 @@ To initialize a new environment set its Reader and load the packages you that wa
 
 ```go
 env := lisp.NewEnv(nil)
-env.Reader = parser.NewReader()
+env.Runtime.Reader = parser.NewReader()
 lerr := lisp.InitializeUserEnv(env)
 if !lerr.IsNil() {
-   log.Panicf("initialization error: %v", lerr) 
+   log.Panicf("initialization error: %v", lerr)
 }
 lerr = lisplib.LoadLibrary(env)
 if !lerr.IsNil() {
@@ -40,26 +40,30 @@ if err != nil {
     // handle parse error
 }
 lerr := fn(env)
-if lerr.Type != LError {
+if lerr.Type == lisp.LError {
     // handle execution error
 }
 ```
+
+---
 
 ## Writing Functions
 
 Programs embedding elps can write functions in Go which can be loaded into packages, bound under a given symbol.
 
+---
+
 ## Testing Functions
 
-Use go package bitbucket.org/luthersystems/elps/elpstest and the lisp package `testing` to write tests for custom packages. See the standard library's tests for examples of how to use these packages together.
+Use go package `github.com/luthersystems/elps/elpstest` and the lisp package `testing` to write tests for custom packages. See the standard library's tests for examples of how to use these packages together.
 
-TODO -- example
+---
 
 ## Working with lisp types
 
 All lisp values are represented in Go as the LVal type. The lisp type of a value can determined by checking the LType value stored in the LVal.Type field.
 
-In general, a function **MUST NOT** modify fields of an LVal. There are cases where functions are "destructive" and modify storage referenced by certain data types. However even these functions **MUST NOT** modify top-level top level LVal fields in order to maintain soundness of computation. For example, a destructive function may be defined that modifies LVal.Cells\[0] by re-assigning it to a new value.
+In general, a function **MUST NOT** modify fields of an LVal. There are cases where functions are "destructive" and modify storage referenced by certain data types. However even these functions **MUST NOT** modify top-level top level LVal fields in order to maintain soundness of computation. For example, a destructive function may be defined that modifies LVal.Cells\[0\] by re-assigning it to a new value.
 
 ```go
 v.Cells[0] = Int(-v.Cells[0].Int)
@@ -79,7 +83,7 @@ return QExpr([]*lisp.LVal{lisp.Int(1), lisp.Int(2), lisp.Float(3.0)})
 
 ### Boolean values
 
-The only false value in the elps language is nil `()`, an empty expression. An LVal can be checked as nil by calling its `IsNil()` method. Instead of calling `IsNil()` to determine the falsehood of a value the `True` function will determine a value's truth value.
+The only false value in the elps language is nil `()`, an empty expression. An LVal can be checked as nil by calling its `IsNil()` method. Instead of calling `IsNil()` to determine the falsehood of a value the True function will determine a value's truth value.
 
 ```go
 ok := env.Eval(lisp.SExpr([]*lisp.LVal{"ok?"}))
@@ -88,15 +92,11 @@ if lisp.True(ok) {  // equivalent to !ok.IsNil()
 }
 ```
 
-### Maps
-
-TODO
-
 ### Conversion functions
 
 Additionally, types can be converted from an LVal into a native Go type using the functions GoString, GoInt, GoFloat, etc.
 
-```
+```lisp
 (set 'data "hello")
 ```
 
@@ -111,12 +111,14 @@ if s != "hello" {
 
 These functions for converting types to native values are experimental in nature and their semantics could change.
 
-## Operating on Go types
+---
+
+### Operating on Go types
 
 To pass a native Go value to lisp code wrap it in a call to `lisp.Native()` so the value can be put into an S-expression.
 
 ```go
-    lisptime := lisp.Native(time.Now())
+lisptime := lisp.Native(time.Now())
     expr := SExpr([]*lisp.LVal{"my-function", lisptime})
 ```
 
@@ -149,10 +151,12 @@ type AppData struct {
 
 Given the above struct definition, when an AppData object is wrapped with `lisp.Native()` lisp code can extract exported struct fields using functions in the golang package.
 
-```
+```lisp
 (defun print-name (app-data)
     (let* ( (person (golang:struct-field app-data "Person"))
             (go-name (golang:struct-field app-data "Name"))
             (name (golang:string go-name)))
         (debug-print (string:format "My name is {}" name))))
 ```
+
+---
