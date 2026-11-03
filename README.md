@@ -4,12 +4,17 @@ Welcome to the documentation hub for the Luther Platform!
 
 This repository provides comprehensive guides, language references, onboarding information, connector details, middleware integration, and more to support users and developers working with the Luther Platform.
 
+The same guides are published at [docs.luthersystems.com](https://docs.luthersystems.com), where the ELPS examples run in your browser. That site is the source the pages here are synced from, so a page here can lag behind it; when the two differ, docs.luthersystems.com is current.
+
 ---
 
 ## Top-Level Documentation
 
 - [README.md](README.md): Repo and docs overview
-- [announcements.md](announcements.md): Latest announcements, release notes, and updates
+- [release-notes.md](release-notes.md): Release notes for substrate, ELPS and the other platform components
+- [announcements.md](announcements.md): Major platform release announcements
+- [security-notice-emsign.md](security-notice-emsign.md): Security notice for the eMudhra (emSign) CA distrust, and the image versions to use
+- [known-issues.md](known-issues.md): Known issues and their workarounds
 - [faq.md](faq.md): Frequently asked questions
 - [glossary.md](glossary.md): Glossary of key terms used throughout the platform
 - [contact-us.md](contact-us.md): How to reach support or provide feedback
