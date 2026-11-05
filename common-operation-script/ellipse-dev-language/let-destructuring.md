@@ -126,11 +126,12 @@ In `let*`, each binding can use the names of the bindings before it, pattern nam
 
 ## When the value does not fit
 
-A value that does not fit its pattern raises `match-error`, a child of `error`. The message names the pattern and the type of the value. The example below shows the error. Remove the `3` to make the value fit.
+A value that does not fit its pattern raises `match-error`, a child of `error`. The message names the pattern and the type of the value. The example below catches the error with `handler-bind` and returns its message. Remove the `3` to make the value fit; the result is then `3`.
 
 ```lisp
-(let ([(list a b) (list 1 2 3)])
-  (+ a b))
+(handler-bind ((match-error (lambda (c &rest _) (error-message))))
+  (let ([(list a b) (list 1 2 3)])
+    (+ a b)))  ; evaluates to "the value does not match the pattern (list a b): got list"
 ```
 
 Catch `match-error` with `handler-bind` when bad input is possible:

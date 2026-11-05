@@ -46,7 +46,7 @@ environment (a Kubernetes `env:` block, an ECS task definition, and so on).
 | --- | --- | --- |
 | `CHAINCODE_LISTEN_ADDR` | `:8080` | Address the chaincode service listens on for the peer's connection. |
 | `CHAINCODE_LOG_LEVEL` | `info` | Log verbosity. Accepts `trace`, `debug`, `info`, `warn`, `error`, `fatal`, `panic`. |
-| `CHAINCODE_PROM_LISTEN_ADDR` | `:9600` | Address the Prometheus metrics endpoint listens on. |
+| `CHAINCODE_PROM_LISTEN_ADDR` | `:9600` | Address the Prometheus metrics endpoint listens on. The same address serves the Go pprof profiles under `/debug/pprof/`, with no authentication, so keep it inside the cluster. |
 | `CHAINCODE_OTLP_TRACER_ENDPOINT` | unset | gRPC OTLP tracing endpoint, for example `http://trace_host:4317`. Tracing is off when unset. |
 | `CHAINCODE_NO_ELPS_FILTER` | `false` | Trace *every* ELPS function instead of only documented ones. Substantially increases trace volume; intended for diagnosis, not steady state. |
 | `CHAINCODE_PREHEAT_CACHE_SIZE` | `0` (built-in default) | How many preheated environments to keep ready. |

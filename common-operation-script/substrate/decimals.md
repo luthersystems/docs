@@ -27,7 +27,7 @@ Coerce a decimal in string, number, or decimal format into a decimal type.
 
 Convert a decimal type into a string.
 
-```
+```lisp
 shiro> (decimal-string (to-decimal 1.22))
 "1.22"
 ```
@@ -38,7 +38,7 @@ shiro> (decimal-string (to-decimal 1.22))
 
 Convert a decimal type into a float.
 
-```
+```lisp
 shiro> (decimal-float (to-decimal "1.22"))
 1.22
 ```

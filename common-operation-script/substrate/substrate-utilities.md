@@ -12,8 +12,8 @@ You can access the following functions in the substrate REPL To run the REPL: `m
 
 Returns the first item of the first list of the outer list.
 
-```
-elps> (caar '('("A" "B" "C") '(3 2 1)))
+```lisp
+(caar '('("A" "B" "C") '(3 2 1)))
 "A"
 ```
 
@@ -23,8 +23,8 @@ elps> (caar '('("A" "B" "C") '(3 2 1)))
 
 Takes the first inner list and returns the item after the first value.
 
-```
-elps> (cadar '('("A" "B" "C") '(3 2 1)))
+```lisp
+(cadar '('("A" "B" "C") '(3 2 1)))
 "B"
 ```
 
@@ -34,8 +34,8 @@ elps> (cadar '('("A" "B" "C") '(3 2 1)))
 
 Returns the first item from the outer list after the first value.
 
-```
-elps> (cadr '('("A" "B" "C") "1" '(1 2 3)))
+```lisp
+(cadr '('("A" "B" "C") "1" '(1 2 3)))
 "1"
 ```
 
@@ -45,8 +45,8 @@ elps> (cadr '('("A" "B" "C") "1" '(1 2 3)))
 
 Returns the last item of the last item of a list.
 
-```
-elps> (cddr '('("A" "B" "C") '(3 2 1) "1"))
+```lisp
+(cddr '('("A" "B" "C") '(3 2 1) "1"))
 "1"
 ```
 
@@ -54,18 +54,18 @@ elps> (cddr '('("A" "B" "C") '(3 2 1) "1"))
 
 ## Sequence Helpers
 
-```
-elps> (third '(1 2 3 4 5 6 7 8 9 10))
+```lisp
+(third '(1 2 3 4 5 6 7 8 9 10))
 3
-elps> (fourth '(1 2 3 4 5 6 7 8 9 10))
+(fourth '(1 2 3 4 5 6 7 8 9 10))
 4
-elps> (fifth '(1 2 3 4 5 6 7 8 9 10))
+(fifth '(1 2 3 4 5 6 7 8 9 10))
 5
-elps> (sixth '(1 2 3 4 5 6 7 8 9 10))
+(sixth '(1 2 3 4 5 6 7 8 9 10))
 6
-elps> (seventh '(1 2 3 4 5 6 7 8 9 10))
+(seventh '(1 2 3 4 5 6 7 8 9 10))
 7
-elps> (last '(1 2 3 4 5 6 7 8 9 10))
+(last '(1 2 3 4 5 6 7 8 9 10))
 10
 ```
 
@@ -75,18 +75,18 @@ elps> (last '(1 2 3 4 5 6 7 8 9 10))
 
 Interprets a truthy value, returning a boolean.
 
-```
-elps> (to-bool ())
+```lisp
+(to-bool ())
 false
-elps> (to-bool "false")
+(to-bool "false")
 true
-elps> (to-bool "")
+(to-bool "")
 true
-elps> (to-bool 0)
+(to-bool 0)
 true
-elps> (to-bool (vector))
+(to-bool (vector))
 true
-elps> (to-bool false)
+(to-bool false)
 false
 ```
 
@@ -99,16 +99,16 @@ Perform logical implies on the two arguments:
 -   If the first argument is truthy, return the boolean value of the second argument
 -   If the first argument if false, return true
 
-```
-elps> (implies false true)
+```lisp
+(implies false true)
 true
-elps> (implies () false)
+(implies () false)
 true
-elps> (implies "" false) ;; Note that <""> is truthy
+(implies "" false) ;; Note that <""> is truthy
 false
-elps> (implies true false)
+(implies true false)
 false
-elps> (implies true "test")
+(implies true "test")
 true
 ```
 
@@ -118,11 +118,11 @@ true
 
 The `when` macro acts as a "one-armed if" expression but also allows multiple consequent expressions which are evaluated as if in a progn.
 
-```
-elps> (when true (debug-print "hello"))
+```lisp
+(when true (debug-print "hello"))
 "hello"
 ()
-elps> (when false (debug-print "hello"))
+(when false (debug-print "hello"))
 ()
 ```
 
@@ -132,10 +132,10 @@ elps> (when false (debug-print "hello"))
 
 The `unless` macro acts as a "one-armed if not" expression but also allows multiple consequent expressions which are evaluated as if in a progn.
 
-```
-elps> (unless true (debug-print "hello"))
+```lisp
+(unless true (debug-print "hello"))
 ()
-elps> (unless false (debug-print "hello"))
+(unless false (debug-print "hello"))
 "hello"
 ()
 ```
@@ -146,8 +146,8 @@ elps> (unless false (debug-print "hello"))
 
 The `while` macro emulates the C "while" block. If predicate-expression evaluates to true, consequent-expressions are evaluated and then the process repeats. If and when the loop terminates, the predicate-expression will have just evaluated to false. The macro always evaluates to `()`.
 
-```
-elps> (let* ([x 10]
+```lisp
+(let* ([x 10]
              [y  0])
         (while (> x 0)
           (set! x (- x 1))
@@ -172,12 +172,12 @@ elps> (let* ([x 10]
 
 Returns `x` if truthy, and `d` otherwise.
 
-```
-elps> (default () "fallback")
+```lisp
+(default () "fallback")
 "fallback"
-elps> (default "" "fallback")
+(default "" "fallback")
 ""
-elps> (default 123 "fallback")
+(default 123 "fallback")
 123
 ```
 
@@ -187,10 +187,10 @@ elps> (default 123 "fallback")
 
 Returns `x` if the string isn't empty (`""`), and `d` otherwise.
 
-```
-elps> (default-string "" "fallback")
+```lisp
+(default-string "" "fallback")
 "fallback"
-elps> (default-string "ABC" "fallback")
+(default-string "ABC" "fallback")
 "ABC"
 ```
 
@@ -200,10 +200,10 @@ elps> (default-string "ABC" "fallback")
 
 Returns a function which will call FUN passing it INITIAL-ARGS and then any other args.
 
-```
-elps> (set 'test (sorted-map "A" 1 "B" 2 "C" 3))
+```lisp
+(set 'test (sorted-map "A" 1 "B" 2 "C" 3))
 (sorted-map "A" 1 "B" 2 "C" 3)
-elps> (map 'list (curry get test) (keys test))
+(map 'list (curry get test) (keys test))
 '(1 2 3)
 ```
 
@@ -213,10 +213,10 @@ elps> (map 'list (curry get test) (keys test))
 
 Returns a empty vector if `x` is nil, and `x` otherwise.
 
-```
-elps> (vector-if-nil "")
+```lisp
+(vector-if-nil "")
 ""
-elps> (vector-if-nil "ABC")
+(vector-if-nil "ABC")
 "ABC"
 ```
 
@@ -226,14 +226,14 @@ elps> (vector-if-nil "ABC")
 
 Returns false for non-boolean values or `x` for booleans.
 
-```
-elps> (bool-is-substantial ())
+```lisp
+(bool-is-substantial ())
 false
-elps> (bool-is-substantial "true")
+(bool-is-substantial "true")
 false
-elps> (bool-is-substantial true)
+(bool-is-substantial true)
 true
-elps> (bool-is-substantial false)
+(bool-is-substantial false)
 false
 ```
 
@@ -243,18 +243,18 @@ false
 
 Checks if the value can be interpreted as a int and is non-zero.
 
-```
-elps> (int-is-substantial "123")
+```lisp
+(int-is-substantial "123")
 false
-elps> (int-is-substantial ())
+(int-is-substantial ())
 false
-elps> (int-is-substantial 123)
+(int-is-substantial 123)
 true
-elps> (int-is-substantial 123.0)
+(int-is-substantial 123.0)
 true
-elps> (int-is-substantial 123.1)
+(int-is-substantial 123.1)
 false
-elps> (int-is-substantial 0)
+(int-is-substantial 0)
 false
 ```
 
@@ -264,18 +264,18 @@ false
 
 Checks if the value can be interpreted as a float and is non-zero.
 
-```
-elps> (float-is-substantial "2")
+```lisp
+(float-is-substantial "2")
 false
-elps> (float-is-substantial 2)
+(float-is-substantial 2)
 false
-elps> (float-is-substantial 2.2)
+(float-is-substantial 2.2)
 true
-elps> (float-is-substantial 2.0)
+(float-is-substantial 2.0)
 true
-elps> (float-is-substantial 0.1)
+(float-is-substantial 0.1)
 true
-elps> (float-is-substantial 0.0)
+(float-is-substantial 0.0)
 false
 ```
 
@@ -285,12 +285,12 @@ false
 
 Checks if the value is a string and isn't empty.
 
-```
-elps> (string-is-substantial "")
+```lisp
+(string-is-substantial "")
 false
-elps> (string-is-substantial "ABC")
+(string-is-substantial "ABC")
 true
-elps> (string-is-substantial ())
+(string-is-substantial ())
 false
 ```
 
@@ -300,10 +300,10 @@ false
 
 Returns nil for empty strings, otherwise returns the input string.
 
-```
-elps> (nil-if-empty-string "")
+```lisp
+(nil-if-empty-string "")
 ()
-elps> (nil-if-empty-string "ABC")
+(nil-if-empty-string "ABC")
 "ABC"
 ```
 
@@ -313,12 +313,12 @@ elps> (nil-if-empty-string "ABC")
 
 Checks if the value is a number.
 
-```
-elps> (num? 0.0)
+```lisp
+(num? 0.0)
 true
-elps> (num? "0")
+(num? "0")
 false
-elps> (num? 123)
+(num? 123)
 true
 ```
 
@@ -328,16 +328,16 @@ true
 
 Checks if the value can be interpreted as a number and is non-zero.
 
-```
-elps> (num-is-substantial 0)
+```lisp
+(num-is-substantial 0)
 false
-elps> (num-is-substantial 0.0)
+(num-is-substantial 0.0)
 false
-elps> (num-is-substantial "100")
+(num-is-substantial "100")
 false
-elps> (num-is-substantial 100)
+(num-is-substantial 100)
 true
-elps> (num-is-substantial -0.1)
+(num-is-substantial -0.1)
 true
 ```
 
@@ -347,14 +347,14 @@ true
 
 Checks if the value is a sequence (list or vector).
 
-```
-elps> (seq? ())
+```lisp
+(seq? ())
 true
-elps> (seq? "")
+(seq? "")
 false
-elps> (seq? (list 1 2 3))
+(seq? (list 1 2 3))
 true
-elps> (seq? (vector 1 2 4))
+(seq? (vector 1 2 4))
 true
 ```
 
@@ -364,10 +364,10 @@ true
 
 Checks if the value is a non-empty sequence.
 
-```
-elps> (seq-is-substantial ())
+```lisp
+(seq-is-substantial ())
 false
-elps> (seq-is-substantial '(1 2 3))
+(seq-is-substantial '(1 2 3))
 true
 ```
 
@@ -377,12 +377,12 @@ true
 
 Checks if the value is a non-empty map.
 
-```
-elps> (map-is-substantial 0)
+```lisp
+(map-is-substantial 0)
 false
-elps> (map-is-substantial (sorted-map))
+(map-is-substantial (sorted-map))
 false
-elps> (map-is-substantial (sorted-map "A" 1))
+(map-is-substantial (sorted-map "A" 1))
 true
 ```
 
@@ -392,22 +392,22 @@ true
 
 Checks the value is non-empty and substantial across types.
 
-```
-elps> (generic-is-substantial ())
+```lisp
+(generic-is-substantial ())
 false
-elps> (generic-is-substantial false)
+(generic-is-substantial false)
 false
-elps> (generic-is-substantial true)
+(generic-is-substantial true)
 true
-elps> (generic-is-substantial 1.1)
+(generic-is-substantial 1.1)
 true
-elps> (generic-is-substantial '())
+(generic-is-substantial '())
 false
-elps> (generic-is-substantial '(1))
+(generic-is-substantial '(1))
 true
-elps> (generic-is-substantial (sorted-map "A" 1))
+(generic-is-substantial (sorted-map "A" 1))
 true
-elps> (generic-is-substantial +)
+(generic-is-substantial +)
 stdin:1: generic-is-substantial: unknown type in generic-is-substantial
 ```
 
@@ -417,8 +417,8 @@ stdin:1: generic-is-substantial: unknown type in generic-is-substantial
 
 Zero pads the number with a width of 20.
 
-```
-elps> (widen-number 11111111)
+```lisp
+(widen-number 11111111)
 "00000000000011111111"
 ```
 
@@ -428,10 +428,10 @@ elps> (widen-number 11111111)
 
 Zero pads to penny width.
 
-```
-elps> (widen-number-pennies 1)
+```lisp
+(widen-number-pennies 1)
 "01"
-elps> (widen-number-pennies 20)
+(widen-number-pennies 20)
 "20"
 ```
 
@@ -441,10 +441,10 @@ elps> (widen-number-pennies 20)
 
 Checks if the string is in the string sequence.
 
-```
-elps> (string-in? "A" '("A" "B" "C"))
+```lisp
+(string-in? "A" '("A" "B" "C"))
 true
-elps> (string-in? "A" '("B" "C"))
+(string-in? "A" '("B" "C"))
 false
 ```
 
@@ -454,10 +454,10 @@ false
 
 Determines that all strings in seq `s` are in seq `lis`.
 
-```
-elps> (strings-in? '("A" "B") '("A" "B" "C"))
+```lisp
+(strings-in? '("A" "B") '("A" "B" "C"))
 true
-elps> (strings-in? '("A" "B") '("B" "C"))
+(strings-in? '("A" "B") '("B" "C"))
 false
 ```
 
@@ -467,10 +467,10 @@ false
 
 Checks if the string has the given prefix.
 
-```
-elps> (string-starts-with? "ABC" "A")
+```lisp
+(string-starts-with? "ABC" "A")
 true
-elps> (string-starts-with? "ABC" "B")
+(string-starts-with? "ABC" "B")
 false
 ```
 
@@ -480,12 +480,12 @@ false
 
 Gets a string substring.
 
-```
-elps> (string-substring "ABC" 0 1)
+```lisp
+(string-substring "ABC" 0 1)
 "A"
-elps> (string-substring "ABC" 1 1)
+(string-substring "ABC" 1 1)
 ""
-elps> (string-substring "ABC" 0 3)
+(string-substring "ABC" 0 3)
 "ABC"
 ```
 
@@ -495,10 +495,10 @@ elps> (string-substring "ABC" 0 3)
 
 Checks if the string contains only numeric digits.
 
-```
-elps> (string-is-digits? "ABC")
+```lisp
+(string-is-digits? "ABC")
 false
-elps> (string-is-digits? "123")
+(string-is-digits? "123")
 true
 ```
 
@@ -508,12 +508,12 @@ true
 
 Checks if the string contains only hexadecimal digits.
 
-```
-elps> (string-is-hexdigits? "ABC")
+```lisp
+(string-is-hexdigits? "ABC")
 true
-elps> (string-is-hexdigits? "ABC123")
+(string-is-hexdigits? "ABC123")
 true
-elps> (string-is-hexdigits? "GHI")
+(string-is-hexdigits? "GHI")
 false
 ```
 
@@ -523,10 +523,10 @@ false
 
 Checks if the string is a universally unique identifier.
 
-```
-elps> (string-is-guid? "ABC")
+```lisp
+(string-is-guid? "ABC")
 false
-elps> (string-is-guid? "5eb24518-8604-4998-805a-7d7097d02b3b")
+(string-is-guid? "5eb24518-8604-4998-805a-7d7097d02b3b")
 true
 ```
 
@@ -536,7 +536,7 @@ true
 
 Checks if the strings match, supports `?` to mach any character.
 
-```
+```lisp
 elps> (basic-match "ABC" "AB")
 false
 elps> (basic-match "ABC" "ABC")
@@ -551,7 +551,7 @@ true
 
 Counts the items matched by the predicate function.
 
-```
+```lisp
 elps> (count #^(<= % 5) '(1 2 3 4 5 6 7 8 9 10))
 5
 elps> (count #^(> % 5) '(1 2 3 4 5 6 7 8 9 10))
@@ -566,7 +566,7 @@ elps> (count #^(> % 10) '(1 2 3 4 5 6 7 8 9 10))
 
 Returns the sequence values with indexes.
 
-```
+```lisp
 elps> (seq-with-index '("A" "B" "C"))
 '('("A" 0) '("B" 1) '("C" 2))
 ```
@@ -577,7 +577,7 @@ elps> (seq-with-index '("A" "B" "C"))
 
 `foldl` sequence pairs.
 
-```
+```lisp
 elps> (foldlpairs (lambda (acc elma elmb) (append! acc (vector elma elmb))) (vector) '(1))
 (vector)
 elps> (foldlpairs (lambda (acc elma elmb) (append! acc (vector elma elmb))) (vector) '(1 2 3))
@@ -592,7 +592,7 @@ elps> (foldlpairs (lambda (acc elma elmb) (append! acc (vector elma elmb))) (vec
 
 Deduplicate a sequence of hashable values.
 
-```
+```lisp
 elps> (deduplicate '("A" "B" "C" "D" "C" "B" "A"))
 '("A" "B" "C" "D")
 ```
@@ -626,7 +626,7 @@ elps> (make-string-set '("A" "B" "C" "D" "C" "B" "A"))
 
 Constructs a new map by taking the union of keys, vals of maps m1 and m2, where m2 value override m1 values where both maps share a common key.
 
-```
+```lisp
 elps> (make-mergemap (sorted-map "A" 1) (sorted-map "A" 123 "B" 99))
 (sorted-map "A" 123 "B" 99)
 ```
@@ -637,7 +637,7 @@ elps> (make-mergemap (sorted-map "A" 1) (sorted-map "A" 123 "B" 99))
 
 Create a sorted-map containing the subset of m's values associated with keys in the sequence, map-keys. Any elements of map-keys that are not keys of m will not be keys of the returned submap either.
 
-```
+```lisp
 elps> (make-submap (sorted-map "A" 123 "B" 99) '("A"))
 (sorted-map "A" 123)
 ```
@@ -648,7 +648,7 @@ elps> (make-submap (sorted-map "A" 123 "B" 99) '("A"))
 
 Returns true if all strings in sequence s1 are unique.
 
-```
+```lisp
 elps> (strings-unique? '("A" "B"))
 true
 elps> (strings-unique? '("A" "A"))
@@ -661,7 +661,7 @@ false
 
 Performs a union of two string sequences.
 
-```
+```lisp
 elps> (strings-union 'list '("A" "B") '("C" "B"))
 '("A" "B" "C")
 ```
@@ -672,7 +672,7 @@ elps> (strings-union 'list '("A" "B") '("C" "B"))
 
 Returns unique elements present in both sequences.
 
-```
+```lisp
 elps> (strings-intersect 'list '("A" "B") '("C" "B"))
 '("B")
 ```
@@ -683,7 +683,7 @@ elps> (strings-intersect 'list '("A" "B") '("C" "B"))
 
 Returns unique elements present in both sequences.
 
-```
+```lisp
 elps> (strings-intersect 'list '("A" "B") '("C" "B"))
 '("B")
 ```
@@ -694,7 +694,7 @@ elps> (strings-intersect 'list '("A" "B") '("C" "B"))
 
 Returns unique elements of sequence minuend which are not present in sequence subtrahend.
 
-```
+```lisp
 elps> (strings-subtract 'list '("A" "B" "C") '("A" "B"))
 '("C")
 ```
@@ -705,7 +705,7 @@ elps> (strings-subtract 'list '("A" "B" "C") '("A" "B"))
 
 Returns unique strings that are in seqa or seqb, but are not in both.
 
-```
+```lisp
 elps> (strings-xor 'list '("A" "B" "C") '("A" "B"))
 '("C")
 ```
@@ -716,7 +716,7 @@ elps> (strings-xor 'list '("A" "B" "C") '("A" "B"))
 
 Returns true if the unique strings in seqa are exactly same in seqb.
 
-```
+```lisp
 elps> (strings-equal? '("A" "B" "C") '("A" "B"))
 false
 elps> (strings-equal? '("A" "B" "C") '("C" "A" "B"))
@@ -729,7 +729,7 @@ true
 
 Clears map values, mutating the input map.
 
-```
+```lisp
 elps> (set 'test (sorted-map "A" 1))
 (sorted-map "A" 1)
 elps> (clear-map! test)
@@ -744,7 +744,7 @@ elps> test
 
 Works closer to the way that `equal?` is supposed to for structured data.
 
-```
+```lisp
 elps> (deep-equal? true true)
 true
 elps> (deep-equal? (sorted-map "B" 1 "A" 1) (sorted-map "A" 1 "B" 1))
@@ -759,7 +759,7 @@ false
 
 Filters out nil values from a sequence.
 
-```
+```lisp
 elps> (denil 'list '(1 2 3))
 '(1 2 3)
 elps> (denil 'list '(1 2 3 ()))
@@ -772,7 +772,7 @@ elps> (denil 'list '(1 2 3 ()))
 
 Joins a list of strings with commas, and adds an "and" before the last element. It uses oxford comma style.
 
-```
+```lisp
 elps> (human-join-strings '("This" "that" "other"))
 "This, that, and other"
 ```
@@ -785,7 +785,7 @@ Remove leading spaces from a string.
 
 **Deprecated:** use `(string:trim-left str " ")`, which is the same.
 
-```
+```lisp
 elps> (triml " Hello World ")
 "Hello World "
 ```
@@ -798,7 +798,7 @@ Remove trailing spaces from a string.
 
 **Deprecated:** use `(string:trim-right str " ")`, which is the same.
 
-```
+```lisp
 elps> (trimr " Hello World ")
 " Hello World"
 ```
@@ -811,7 +811,7 @@ Removes leading and trailing spaces from a string.
 
 **Deprecated:** use `(string:trim str " ")`, which is the same. `string:trim-space` also removes tabs and newlines.
 
-```
+```lisp
 elps> (trim " Hello World ")
 "Hello World"
 ```
@@ -822,7 +822,7 @@ elps> (trim " Hello World ")
 
 Tries to construct a single full name string based on optional name fields.
 
-```
+```lisp
 elps> (human-full-name "Charles " "   Robert" "   Darwin  ")
 "Charles Robert Darwin"
 ```
@@ -833,7 +833,7 @@ elps> (human-full-name "Charles " "   Robert" "   Darwin  ")
 
 Encode a map to be used as part of a storage key delimited by ":". The encoding doesn't use ":" so that two maps may be used side-by-side in a storage key without ambiguity.
 
-```
+```lisp
 shiro> (encode-map-storage-key (sorted-map "testkey" "testval" "fnord" "eris"))
 "fnord=eris/testkey=testval"
 ```
@@ -844,7 +844,7 @@ shiro> (encode-map-storage-key (sorted-map "testkey" "testval" "fnord" "eris"))
 
 Map a function on a sequence, where the first argument to the function is `i` and the second argument to the function is the `i`\-th element. Returns a list.
 
-```
+```lisp
 elps> (trim " Hello World ")
 "Hello World"
 ```
@@ -855,7 +855,7 @@ elps> (trim " Hello World ")
 
 Performs intersection across a sequence of string sequences.
 
-```
+```lisp
 shiro> (strings-intersect-seqs 'list (list (list "1" "2" "3") (list "2" "3") (list "2")))
 '("2")
 ```
@@ -868,7 +868,7 @@ find-pos iterates across seq and returns the last position that fn returned true
 
 If no element is found, 0 is returned, which requires special handling when the element found is the first element.
 
-```
+```lisp
 shiro> (find-pos '(1 2 3 2) #^(equal? % 2))
 3
 shiro> (find-pos '(1 2 3 2) #^(equal? % 4))
@@ -881,7 +881,7 @@ shiro> (find-pos '(1 2 3 2) #^(equal? % 4))
 
 Add 2 decimal strings, and return a decimal string. DEPRECATED: Please use `libdecimal` instead of these decimal-money functions.
 
-```
+```lisp
 shiro> (decimal-money-add "0.11" "1.99")
 "2.10"
 ```
@@ -892,7 +892,7 @@ shiro> (decimal-money-add "0.11" "1.99")
 
 An optimization technique by storing the results of expensive function calls and returning the cached result when the same inputs occur again.
 
-```
+```lisp
 shiro> (let* ([t (lambda (x) (+ x 1))]
               [m (memoize-wrap t)])
          (m 1) ; system caches result.
@@ -907,7 +907,7 @@ shiro> (let* ([t (lambda (x) (+ x 1))]
 
 Returns current UTC time.
 
-```
+```lisp
 shiro> now
 "2020-11-25T19:26:38Z"
 ```
@@ -918,8 +918,8 @@ shiro> now
 
 Returns current time as hexidecimal of the unix epoch time in seconds.
 
-```
-shiro> now-unix 
+```lisp
+shiro> now-unix
 "5FBEB281"
 ```
 
@@ -929,7 +929,7 @@ shiro> now-unix
 
 Returns everything but the first item of the first list, of the outer list.
 
-```
+```lisp
 shiro> (cdar '('("A" "B" "C") '(1 2 3)))
 '("B" "C")
 ```
@@ -940,9 +940,9 @@ shiro> (cdar '('("A" "B" "C") '(1 2 3)))
 
 Returns number range.
 
-```
+```lisp
 shiro> widen-number-range
-20        
+20
 ```
 
 ---
@@ -951,7 +951,7 @@ shiro> widen-number-range
 
 Returns pennies range.
 
-```
+```lisp
 shiro> widen-number-pennies-range
 2
 ```
@@ -962,7 +962,7 @@ shiro> widen-number-pennies-range
 
 Returns pennies prefix.
 
-```
+```lisp
 shiro> widen-number-pennies-prefix
 '("00" "0" "")
 ```
@@ -975,7 +975,7 @@ Returns corpus without its first `(length prefix)` characters. It does **not** c
 
 **Deprecated:** use `string:trim-prefix` (substrate with elps v1.69.0 or later), which removes prefix only when corpus starts with it.
 
-```
+```lisp
 shiro> (string-trailer "qwerty" "qwe")
 "rty"
 ```
@@ -986,7 +986,7 @@ shiro> (string-trailer "qwerty" "qwe")
 
 Return current unix epoch time in seconds.
 
-```
+```lisp
 shiro> (now-epoch)
 1606333057
 ```
@@ -997,7 +997,7 @@ shiro> (now-epoch)
 
 Mutates the first vector to include the second vector as the last elements.
 
-```
+```lisp
 shiro> (let* ([v1 (vector 1 2 3)]
               [v2 (vector 5 6 7)])
          (concat! v1 v2)
@@ -1011,7 +1011,7 @@ shiro> (let* ([v1 (vector 1 2 3)]
 
 Get metadata (transaction metadata is stored in the state database under the transaction ID) with string key from the transaction context.
 
-```
+```lisp
 shiro> (cc:set-tx-metadata "test-key" "test-value")
 ()
 shiro> (cc:get-tx-metadata "test-key")
@@ -1024,7 +1024,7 @@ shiro> (cc:get-tx-metadata "test-key")
 
 Returns a specified entry in the metadata field of an entity.
 
-```
+```lisp
 shiro> (let* ([entity (sorted-map "metadata" (vector (sorted-map "name" "test"
                                                                  "bool_value" true)))])
          (entity-metadata entity "test"))
@@ -1037,7 +1037,7 @@ shiro> (let* ([entity (sorted-map "metadata" (vector (sorted-map "name" "test"
 
 Returns the string value for a specific entry in the metadata field of an entity.
 
-```
+```lisp
 shiro> (let* ([entity (sorted-map "metadata" (vector (sorted-map "name" "test"
                                                                  "string_value" "data")))])
          (get-metadata-str entity "test"))
@@ -1050,7 +1050,7 @@ shiro> (let* ([entity (sorted-map "metadata" (vector (sorted-map "name" "test"
 
 Returns the integer value for a specific entry in the metadata field of an entity.
 
-```
+```lisp
 shiro> (let* ([entity (sorted-map "metadata" (vector (sorted-map "name" "test"
                                                                  "int_value" 250)))])
          (get-metadata-int entity "test"))
@@ -1063,7 +1063,7 @@ shiro> (let* ([entity (sorted-map "metadata" (vector (sorted-map "name" "test"
 
 Ensures the 2 arguments are deeply equal. Used in testing.
 
-```
+```lisp
 shiro> (assert-deep-equal (sorted-map "1" 2) (sorted-map "1" 2))
 ()
 shiro> (assert-deep-equal (sorted-map "1" 2) (sorted-map "1" 1))
@@ -1082,7 +1082,7 @@ Stack Trace [2 frames -- entrypoint last]:
 
 Ensures the 2 arguments are NOT deeply equal. Used in testing.
 
-```
+```lisp
 shiro> (assert-not-deep-equal (sorted-map "1" 2) (sorted-map "1" 1))
 ()
 shiro> (assert-not-deep-equal (sorted-map "1" 2) (sorted-map "1" 2))
@@ -1100,7 +1100,7 @@ Stack Trace [2 frames -- entrypoint last]:
 
 Expects an exception or error to be returned and handles accordingly.
 
-```
+```lisp
 shiro> (assert-condition set-exception-error (validate-nonempty-string (sorted-map "test" 123) "test"))
 INFO[305120] generating exception                          description="test must be a non-empty string" id=shirotester-1 op=TestUtils req_time="2020-11-18T21:52:56Z" test-key-1=test-value-1 test-key-2=test-value-2 test-key-3=test-value-3 type=BUSINESS
 ()
@@ -1114,7 +1114,7 @@ shiro> (assert-condition set-exception-error (validate-nonempty-string (sorted-m
 
 Converts a timestamp to a date.
 
-```
+```lisp
 shiro>  (timestamp-to-date (cc:timestamp (cc:now)))
 "2020-11-18"
 ```
@@ -1125,7 +1125,7 @@ shiro>  (timestamp-to-date (cc:timestamp (cc:now)))
 
 Returns today's date.
 
-```
+```lisp
 shiro> (date-now)
 "2020-11-18"
 ```
@@ -1136,7 +1136,7 @@ shiro> (date-now)
 
 Returns the number of years, months, and days in between 2 dates as a vector.
 
-```
+```lisp
 shiro> (ymd-between-dates "1997-08-05" "2020-11-18")
 (vector 23 3 13)
 ```
@@ -1147,7 +1147,7 @@ shiro> (ymd-between-dates "1997-08-05" "2020-11-18")
 
 Extracts the year, month, and date and returns that as a vector.
 
-```
+```lisp
 shiro> (ymd-extract "1997-08-05")
 (vector 1997 8 5)
 ```
@@ -1158,7 +1158,7 @@ shiro> (ymd-extract "1997-08-05")
 
 Returns the integer input in money format.
 
-```
+```lisp
 shiro> (decimal-money-from-int 250)
 "250.00"
 ```
@@ -1169,7 +1169,7 @@ shiro> (decimal-money-from-int 250)
 
 Takes a vector of the dollar amount and cent amount as input and returns in money format.
 
-```
+```lisp
 shiro> (decimal-money-from-vector (vector 250 25))
 "250.25"
 ```
@@ -1180,7 +1180,7 @@ shiro> (decimal-money-from-vector (vector 250 25))
 
 Takes a money amount as input and returns a vector of the dollar amount and the cent amount.
 
-```
+```lisp
 shiro> (decimal-money-to-vector "250.25")
 (vector 250 25)
 ```
@@ -1191,7 +1191,7 @@ shiro> (decimal-money-to-vector "250.25")
 
 Whether the first money amount is larger than the second.
 
-```
+```lisp
 shiro> (decimal-money-cmp "100.49" "100.50")
 -1
 shiro> (decimal-money-cmp "100.49" "100.49")
