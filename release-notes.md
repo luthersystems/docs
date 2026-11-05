@@ -13,10 +13,95 @@ eMudhra (emSign) CA Distrust</a> for the versions to use.</p>
 <code>thread-first</code> or <code>thread-last</code> step fails when its head
 is a macro. Upgrade to v2.246.0. See <a href="known-issues.md">Known
 Issues</a>.</p>
+<p><strong>Known issue:</strong> on Luther Auth v4.12.0 with refresh tokens on
+and a Redis user limited to <code>f_*</code> keys, every refresh fails with
+<code>500</code>. Use v4.13.0. See <a href="known-issues.md">Known
+Issues</a>.</p>
 </div>
 
 Operator settings applied to the chaincode container are catalogued in
 [Chaincode Environment Variables](common-operation-script/substrate/chaincode-environment-variables.md).
+
+## 2026-11-05: fabric-snapshot-archiver v0.0.9
+
+- **fabric-snapshot-archiver**: `serve --snapshot-schedule` takes a snapshot on a cron schedule (UTC), uploads it to S3, and keeps the newest `--keep-archives` archives of the channel (default 14). The IAM role needs `s3:DeleteObject` to delete old archives. Prometheus metrics report the last success, so you can alert when snapshots stop. See [Take snapshots on a schedule](operations/fabric-snapshot-archiver.md#take-snapshots-on-a-schedule)
+- **fabric-snapshot-archiver**: `serve --metrics-addr` serves `/metrics` and the health endpoints on a listener of their own, so the API, which has no authentication, can listen on localhost only
+- **fabric-snapshot-archiver**: `archive-blocks` moves the sealed block files of the peer ledger to a cheap volume (sc1) and leaves a symlink, so the peer keeps its hot path on a fast volume (gp3). A crash at any step leaves the original file or a complete copy
+- **fabric-snapshot-archiver**: `serve` stops cleanly on SIGTERM, so a pod shutdown cancels a running snapshot
+- **fabric-snapshot-archiver**: Updates `golang.org/x/net` to v0.62.0
+
+## 2026-11-04: substrate v2.256.0
+
+- **substrate**: The in-memory mock ledger (`shirotester`, the Go mock client and offline tests) uses less memory and restores snapshots faster. Its memtable drops from 16 MB to 8 MB. An empty mock holds about 10.5 MB, down from about 26 MB. A snapshot restore plus its first call is about 30% faster. Peers do not change
+- **substrate**: One size of test transaction commits slower in the mock: one that writes 1.2 MB to 2.4 MB, or about 13k to 26k keys. Such a transaction measured 60% to 83% slower. It still commits. Smaller and larger transactions cost the same as before
+
+Details: [substrate v2.256.0 release](https://github.com/luthersystems/substrate/releases/tag/v2.256.0).
+
+## 2026-11-04: substrate v2.255.0
+
+- **substrate**: Mock ledger snapshots are faster to make and use less memory. A snapshot of a 10k-key ledger now allocates about 7.7 MB, down from about 363 MB. A restore makes 42% fewer allocations. The snapshot format does not change: older snapshots still load, and new ones load on older versions
+- **substrate**: The gateway uses less CPU per request. With tracing off, it does less work for each request but still passes the caller's trace context to the chaincode. A read no longer builds the orderer clients. Each change saved about 4% of the gateway's CPU on a read benchmark
+- **substrate**: Fix: the gateway no longer panics when it cannot make a transaction header. If the gateway cannot build its orderer clients, the transaction fails and is not reported as possibly sent
+- **substrate**: The chaincode metrics listener (`CHAINCODE_PROM_LISTEN_ADDR`) serves the named pprof profiles under `/debug/pprof/`, such as `heap`, `allocs` and `goroutine`. Before, these returned 404, so a memory profile of a running chaincode could not be taken. The CPU profile and trace were already served
+- **substrate**: Security: the profiles have no authentication, and they show goroutine stacks and heap contents. Keep the metrics port inside the cluster
+
+Details: [substrate v2.255.0 release](https://github.com/luthersystems/substrate/releases/tag/v2.255.0).
+
+## 2026-11-04: Luther Auth v4.13.0
+
+- **General**: Fix: with refresh tokens on and a Redis user limited to `f_*` keys, every refresh on v4.12.0 failed with `500`. The `revoke-user` record is now under `f_`, and the store runs only GET, SET, PING and its scripts. See [Redis user permissions](connectors/lutherauth/sessions.md#redis-user-permissions)
+- **General**: Security: sign-out can also end the IdP's own session, so the next login in the same browser asks for the password again. Set `AUTH_OAUTH_IDP_LOGOUT_URL` (an OIDC `end_session_endpoint`, or Auth0 `/v2/logout`) and, if needed, `AUTH_OAUTH_IDP_LOGOUT_RETURN_PARAM`. Off by default. See [End the IdP session too](connectors/lutherauth/sessions.md#end-the-idp-session-too)
+- **General**: New `AUTH_OAUTH_IDP_LOGOUT_ID_TOKEN_HINT` sends the user's ID token as `id_token_hint` to the IdP logout, for an IdP that requires it. The token is kept in an HttpOnly cookie on `AUTH_OAUTH_IDP_LOGOUT_ID_TOKEN_COOKIE_PATH` (default `/v1/auth`)
+
+Details: [Luther Auth v4.13.0 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.13.0).
+
+## 2026-11-04: Luther Auth v4.12.0
+
+**Known issue:** do not deploy this version with refresh tokens on and a Redis user limited to `f_*` keys. Every refresh fails with `500`. Use v4.13.0. See [Known Issues](known-issues.md).
+
+- **General**: New `revoke-user` command, run in the LutherAuth pod, ends every refresh session of a user at once. Use it after you disable a user at the IdP. It needs the Redis refresh store. See [Revoke a user](connectors/lutherauth/sessions.md#revoke-a-user)
+- **General**: A minted token (`mint-token`, or a `mint_only` client) lasts at most 90 days by default. Before, the cap was one year. **Upgrade note:** a `mint_only` client with a `ttl` above 90 days stops LutherAuth at startup, and `mint-token` refuses a longer `--ttl`. Set `AUTH_CLIENT_CREDENTIALS_MINT_MAX_TTL` or lower the `ttl` before you upgrade
+- **General**: Security: every LutherAuth response now sends `Cache-Control: no-store`, except the JWKS. A CDN that cached the login response gave every user in the cache window the same OAuth state, nonce and PKCE verifier. See [Behind a CDN](connectors/lutherauth/behind-a-cdn.md)
+- **General**: A bad login, callback or sign-out request (an expired login, a replayed or cancelled callback, a malformed query, a disallowed sign-out redirect) now gets `400` instead of `500`. The response never carries the IdP's error text
+- **General**: Each refresh token has its own `jti`, and a refreshed access token does not carry it. Before, two rotations in the same second could issue the same refresh token
+
+Details: [Luther Auth v4.12.0 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.12.0).
+
+## 2026-11-04: Luther Auth v4.11.0
+
+- **General**: New `AUTH_REFRESH_ALLOW_LEGACY_LOGIN` keeps the legacy login beside refresh tokens, so apps move to refresh tokens one at a time
+- **General**: An access token made by a refresh lasts `AUTH_JWT_REFRESH_INTERVAL` (30 minutes by default). A legacy login token keeps `AUTH_JWT_TIMEOUT`
+
+Details: [Luther Auth v4.11.0 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.11.0).
+
+## 2026-11-03: Luther Auth v4.10.0
+
+- **General**: Security: refresh tokens are signed with their own key, which services cannot verify, so a refresh token is never accepted as an access token. Refresh tokens signed the old way still work, so no session ends at the upgrade. **Upgrade note:** keep the rollout to one replica set switch, because an old pod cannot verify a new refresh token, and a rollback to v4.9 signs those users out
+- **General**: Security: the Redis refresh store keeps only digests of refresh tokens, rotates a token family in one atomic step, and keeps revocations
+- **General**: Sign-out revokes the refresh token family and always deletes the refresh cookie
+- **General**: The refresh store can authenticate to AWS ElastiCache with IAM (`AUTH_JWT_REFRESH_REDIS_IAM_CACHE_NAME`), so no Redis password is stored
+- **General**: A magic link signs in only once. The Azure backend can pin the token issuer. The generic OAuth backend has an opt-in `email_verified` check
+
+Details: [Luther Auth v4.10.0 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.10.0).
+
+## 2026-11-03: lutherauth-sdk-go v0.0.12
+
+- **lutherauth-sdk-go**: New `jwk.WithIssuerPolicy` sets, in one place, each issuer a service trusts, its JWKS URL and the audiences (and subjects) its tokens must carry. A token from an issuer that is not in the policy is refused before a key is fetched. An empty policy accepts no token, so a pin that failed to load does not turn into no pin. See [Verify Tokens in Go](connectors/lutherauth/verify-tokens.md)
+
+Details: [lutherauth-sdk-go v0.0.12 release](https://github.com/luthersystems/lutherauth-sdk-go/releases/tag/v0.0.12).
+
+## 2026-11-03: lutherauth-sdk-go v0.0.11
+
+- **lutherauth-sdk-go**: Security: a LutherAuth refresh token is always refused as a bearer token
+- **lutherauth-sdk-go**: New `jwk.WithExpectedIssuers` refuses a token from any issuer that is not listed
+
+Details: [lutherauth-sdk-go v0.0.11 release](https://github.com/luthersystems/lutherauth-sdk-go/releases/tag/v0.0.11).
+
+## 2026-11-03: Luther Auth v4.9.0
+
+- **General**: New OAuth 2.0 client credentials grant at `/v1/auth/token`, for a service that calls a Luther API with no person behind it. Only a registered client that sends its secret gets a token, and the claims come from the server configuration. Off by default. See [Service Tokens](connectors/lutherauth/service-tokens.md)
+- **General**: New `mint-token` command, run in the LutherAuth pod, signs one long-lived token for a registered client. The signing key does not leave the cluster. It replaces the fake IdP for long-lived service tokens
+- **General**: Magic link emails are rate limited for each client IP and each email address. A request over a limit gets `429 Too Many Requests`. **Upgrade note:** behind a load balancer or a CDN, set `AUTH_MAGIC_LINK_TRUSTED_PROXY_HOPS`. See [Upgrade LutherAuth](connectors/lutherauth/upgrade-v4-9-0.md)
 
 ## 2026-11-02: substrate v2.254.0
 

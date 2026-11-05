@@ -4,7 +4,9 @@ description: Reference for builtin functions.
 
 # Standard Library
 
-## Function Reference
+This page shows the most used functions with examples. The [Function Reference](function-reference.md) lists every function, macro and package of the ELPS release this site runs, generated from elps itself.
+
+## Common Functions
 
 ### `debug-print`
 
@@ -71,8 +73,7 @@ Converts string digits (\[0-9\]+) and floats to integers. For floats the fractio
 ; 42
 (to-int 42.9)
 ; 42
-(to-int "4.2")
-; ERROR
+; (to-int "4.2") raises an error: "4.2" is not an integer
 ```
 
 ### `to-float`
@@ -193,11 +194,10 @@ elps> (fn 1)
 
 Unpack is a special case of apply and is more cumbersome. Instead of using unpack it is better to use apply and funcall.
 
-```
-elps> (unpack (lambda (x y) (+ x y)) '(2 7))
+```lisp
+(unpack (lambda (x y) (+ x y)) '(2 7))
 9
-elps> (unpack (lambda (x y) (+ x y)) '(2 7 6))
-stdin:1: _fun16: invalid number of arguments: 3
+; (unpack (lambda (x y) (+ x y)) '(2 7 6)) raises an error: invalid number of arguments: 3
 ```
 
 ### `flip`
@@ -313,13 +313,12 @@ elps> (concat 'list '("A" "B" "C") '(1 2 3))
 
 Inserts a value into a sequence at a specific index.
 
-```
-elps> (set 'test '(1 2 3))
+```lisp
+(set 'test '(1 2 3))
 '(1 2 3)
-elps> (insert-index 'list test 0 999)
+(insert-index 'list test 0 999)
 '(999 1 2 3)
-elps> (insert-index 'list test 42 123)
-stdin:1: lisp:insert-index: index out of bounds
+; (insert-index 'list test 42 123) raises an error: index out of bounds
 ```
 
 ### `stable-sort`
@@ -428,13 +427,12 @@ elps> (reverse 'list (reverse 'list '(1 2 3)))
 
 Returns the sub-slice of a sequence.
 
-```
-elps> (set 'test (make-sequence 0 10))
+```lisp
+(set 'test (make-sequence 0 10))
 '(0 1 2 3 4 5 6 7 8 9)
-elps> (slice 'list test 3 6)
+(slice 'list test 3 6)
 '(3 4 5)
-elps> (slice 'list test 3 0)
-stdin:1: lisp:slice: end before start
+; (slice 'list test 3 0) raises an error: end before start
 ```
 
 ### `list`
@@ -512,15 +510,14 @@ elps> (to-string test)
 
 Gets the array element at the given index (counted from zero).
 
-```
-elps> (aref (vector "A" "B" "C") 0)
-"A"
-elps> (aref (vector "A" "B" "C") 0)
-"A"
-elps> (aref (vector "A" "B" "C") 2)
-"C"
-elps> (aref (vector "A" "B" "C") 3)
-; Out of bounds error
+```lisp
+(aref (vector "A" "B" "C") 0)
+; "A"
+(aref (vector "A" "B" "C") 0)
+; "A"
+(aref (vector "A" "B" "C") 2)
+; "C"
+; (aref (vector "A" "B" "C") 3) raises an error: index out of bounds
 ```
 
 ### `all?`
