@@ -35,6 +35,12 @@ To change one of those pages, edit it in [luthersystems/frontpage-docs](https://
 - Documentation for available system connectors and integration points
 - Start with [connectors/README.md](connectors/README.md)
 
+### Operations
+
+- **Path:** [`operations/`](operations/)
+- Guides for running a Luther network: peer ledger storage and Fabric ledger snapshots
+- Start with [operations/README.md](operations/README.md)
+
 ### Middleware
 
 - **Path:** [`middleware/`](middleware/)

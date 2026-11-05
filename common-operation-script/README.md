@@ -28,6 +28,7 @@ This documentation is organized into several subdirectories, each focused on a c
   - [ellipse-dev-language/README.md](ellipse-dev-language/README.md) — Ellipse language overview
   - [ellipse-dev-language/language-guide.md](ellipse-dev-language/language-guide.md) — Syntax, structure, and idioms
   - [ellipse-dev-language/standard-library.md](ellipse-dev-language/standard-library.md) — Available functions/utilities
+  - [ellipse-dev-language/function-reference.md](ellipse-dev-language/function-reference.md) — Every function, macro and variable of the pinned ELPS release, generated from its docstrings
   - [ellipse-dev-language/advanced.md](ellipse-dev-language/advanced.md) — Advanced topics
   - [ellipse-dev-language/pattern-matching.md](ellipse-dev-language/pattern-matching.md) — `match`: branch on the shape of a value (ELPS v1.93.0 and later)
   - [ellipse-dev-language/let-destructuring.md](ellipse-dev-language/let-destructuring.md) — Binding patterns in `let`, `let*` and `defun` (ELPS v1.93.0 and later)
