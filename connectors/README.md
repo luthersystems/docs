@@ -27,4 +27,8 @@ A full and continually updated list of supported and upcoming connectors, includ
   - Overview of the ConnectorHub architecture, event functions, ELPS helper functions, connector factory patterns, and phylum unit testing for connectors.
   - Step-by-step configuration guides and examples for each major connector (AWS SES, Camunda, Equifax, GoCardless, Invoice Ninja, PDF Service, Postgres, Stripe, etc.)
 
+- [lutherauth/](./lutherauth/README.md): LutherAuth, the Luther authentication service.
+
+  - Service tokens, token checks in Go services, sessions, sign-out and revocation (refresh tokens), network access, running behind a CDN, and the upgrade from v4.7 or later.
+
 Use these docs to implement, configure, and test connectors for new or existing business processes in the Luther Platform.
