@@ -22,6 +22,27 @@ Issues</a>.</p>
 Operator settings applied to the chaincode container are catalogued in
 [Chaincode Environment Variables](common-operation-script/substrate/chaincode-environment-variables.md).
 
+## 2026-11-06: substrate v2.257.0
+
+- **substrate**: **Upgrade note:** substrate is built with Go 1.27.3. Go 1.27 changes the bytes of zlib output and, for strings with invalid UTF-8, of JSON output. Both are consensus-visible. Upgrade every peer and pre-deploy checker of a channel in one maintenance window. While peers mix Go 1.26 and Go 1.27 builds, a transaction that compresses data fails endorsement: for example a `put-mxf` with the `zlib` compressor, or a response that holds `compress:zlib-compress` output. Reads and other transactions are not affected. Data that a Go 1.26 peer wrote still decodes
+- **substrate**: Bump ELPS to v1.96.0: the Lisp JSON functions write the same bytes on Go 1.27's JSON v2 engine as before, invalid UTF-8 included
+- **shiroclient**: The gateway health check can make one real write, to show that the network can endorse, order and commit a transaction, not only answer a query. It is off by default. Turn it on with `--health-check-write` or `SHIROCLIENT_GATEWAY_HEALTH_CHECK_WRITE=true`, then call `GET /health_check?write=true`. The write overwrites one key (`luther:healthcheck:heartbeat`), so the state does not grow. The report gets a `write` row with the transaction id and the commit time. A failed write is a `DOWN` row and HTTP 503. Checks that arrive while a write is in flight share it
+- **substrate**: Security: only a creator of the channel's admin MSP can run the heartbeat write. The chaincode cannot tell one user from another, so the service in front of the gateway (the oracle) must decide which callers may ask for it. Turn the write on only on a gateway that such a service fronts. The `luther:healthcheck:` key space is reserved: a phylum read or write of it fails
+
+Details: [substrate v2.257.0 release](https://github.com/luthersystems/substrate/releases/tag/v2.257.0).
+
+## 2026-11-05: Luther Auth v4.15.0
+
+- **General**: Fix: with refresh tokens and `AUTH_OAUTH_PROTECT_CSRF` on, the CSRF token cookie now lasts the whole refresh session, and each `POST /v1/auth/refresh` sets it again. Before, it expired after the access token lifetime (30 minutes by default), and every call that a service checked for CSRF failed after that. See [CSRF Protection and Cookie Mode](connectors/lutherauth/csrf.md)
+- **General**: Security: a refresh that is in progress when `revoke-user` runs no longer returns a new access token. A rotated refresh token keeps the time of its login, so `revoke-user` refuses every token of a session that started before it
+- **General**: Sign-out revokes the refresh token family also when the token lookup fails. **Behavior change:** if the revoke fails two times (for example, Redis is down), sign-out answers `503` and does not redirect. It keeps the refresh, CSRF token and ID token cookies, so the user can sign out again. See [Sign out](connectors/lutherauth/sessions.md#sign-out)
+- **General**: Every Redis call of the refresh store has a 5-second timeout. The connection pool holds at most 64 connections. A call that waits for a free connection gives up after the timeout
+- **General**: **Behavior change:** a login whose `sub` is empty is refused, because `revoke-user` cannot end it
+- **General**: Security: the OAuth callback refuses a nonce cookie of the wrong length with `400`. Before, a short nonce cookie such as `0` gave every such login the same refresh token family and CSRF token
+- **General**: Security: logs no longer contain refresh tokens or raw issuer values
+
+Details: [Luther Auth v4.15.0 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.15.0).
+
 ## 2026-11-05: fabric-snapshot-archiver v0.0.9
 
 - **fabric-snapshot-archiver**: `serve --snapshot-schedule` takes a snapshot on a cron schedule (UTC), uploads it to S3, and keeps the newest `--keep-archives` archives of the channel (default 14). The IAM role needs `s3:DeleteObject` to delete old archives. Prometheus metrics report the last success, so you can alert when snapshots stop. See [Take snapshots on a schedule](operations/fabric-snapshot-archiver.md#take-snapshots-on-a-schedule)
@@ -29,6 +50,18 @@ Operator settings applied to the chaincode container are catalogued in
 - **fabric-snapshot-archiver**: `archive-blocks` moves the sealed block files of the peer ledger to a cheap volume (sc1) and leaves a symlink, so the peer keeps its hot path on a fast volume (gp3). A crash at any step leaves the original file or a complete copy
 - **fabric-snapshot-archiver**: `serve` stops cleanly on SIGTERM, so a pod shutdown cancels a running snapshot
 - **fabric-snapshot-archiver**: Updates `golang.org/x/net` to v0.62.0
+
+## 2026-11-05: Luther Auth v4.14.0
+
+- **General**: New `AUTH_GENERIC_REQUIRE_ACCESS_TOKEN_ISSUER`, off by default. On, the generic OAuth backend refuses an IdP access token whose issuer is not `AUTH_GENERIC_BACKEND_ISSUER`. Turn it on only if your IdP puts the same issuer in the access token and the ID token. The ID token issuer check does not change
+
+Details: [Luther Auth v4.14.0 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.14.0).
+
+## 2026-11-05: Luther Auth v4.13.1
+
+- **General**: Updates dependencies, including the AWS SDK for Go and `golang.org/x/crypto` v0.58.0. No change in behavior
+
+Details: [Luther Auth v4.13.1 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.13.1).
 
 ## 2026-11-04: substrate v2.256.0
 

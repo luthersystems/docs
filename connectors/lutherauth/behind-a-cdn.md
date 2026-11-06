@@ -26,11 +26,19 @@ LutherAuth sends `Cache-Control: no-store` on every response from v4.12.0. The e
 | Error caching | `0` seconds for every 4xx and 5xx code (CloudFront: a custom error response with `error_caching_min_ttl = 0`) |
 | Cookies | Forward all cookies to the origin |
 | Query strings | Forward all. `oauth_login` reads `oauth_callback_url` and `frontend_redirect_url` |
-| Headers | Forward `Authorization`, `Origin`, `Content-Type`, `X-CSRF-Token` and `Sec-Fetch-Mode` |
+| Headers | Forward `Authorization`, `Origin`, `Content-Type`, `X-CSRF-Token` and `Sec-Fetch-Mode`. Also forward `X-CSRF-Token` on the routes of each service that checks it. See [CSRF Protection and Cookie Mode](csrf.md) |
 | `Set-Cookie` from the origin | Pass it through unchanged |
 | Methods | Allow `GET`, `POST` and `OPTIONS` |
 
 Apply the same rule to any API behind the same CDN that returns data for one user or sets cookies. Cache a response only when the origin sends a `Cache-Control` header that allows it. With CloudFront, a default TTL above 0 caches every response that has no `Cache-Control` header.
+
+### Headers on CloudFront
+
+CloudFront sends the origin only the headers that its cache policy or origin request policy lists. It drops every other header with no error.
+
+- A dropped header fails as an authentication error at the service. If CloudFront drops `X-CSRF-Token`, a service with the CSRF check on refuses every cookie request.
+- Each header in a cache policy is part of the cache key. This is not a guard for cookie requests. A `GET` with the access token in a cookie carries neither `Authorization` nor `X-CSRF-Token`, so two users can get the same cache key. Do not cache a route that needs authentication, and never cache `/v1/auth/*`.
+- A cache policy takes at most 10 headers (a CloudFront quota). Before you add a header to a full policy, get a quota increase or move a header to an origin request policy. Otherwise the change fails with `TooManyHeadersInCachePolicy`.
 
 ---
 
