@@ -4,7 +4,7 @@ description: Upgrade a LutherAuth deployment from v4.7 or later to the latest re
 
 # Upgrade LutherAuth
 
-This guide upgrades a LutherAuth deployment from v4.7 or later to the latest release, **v4.13.0**. You can upgrade in one step. Since v4.9.0, LutherAuth has the client credentials grant and the `mint-token` command for [service tokens](service-tokens.md), which replace the fake IdP.
+This guide upgrades a LutherAuth deployment from v4.7 or later to the latest release, **v4.15.0**. You can upgrade in one step. Since v4.9.0, LutherAuth has the client credentials grant and the `mint-token` command for [service tokens](service-tokens.md), which replace the fake IdP.
 
 <div class="docs-banner">
 <p><strong>Do not deploy v4.12.0.</strong> With refresh tokens on and a Redis user that is limited to the <code>f_*</code> keys (the <a href="sessions.md#redis-user-permissions">recommended permissions</a>), every refresh on v4.12.0 fails with <code>500</code>. v4.13.0 fixes it. See <a href="../../known-issues.md">Known Issues</a>.</p>
@@ -57,6 +57,9 @@ Read every row after your current version. **Action** says what to do before you
 | v4.12.0 | Every response, except the JWKS, sends `Cache-Control: no-store`. A bad login, callback or sign-out request gets `400` instead of `500`. New `revoke-user` command (no action). See [Behind a CDN](behind-a-cdn.md) and [Revoke a user](sessions.md#revoke-a-user). |
 | v4.12.0 | Known issue: with refresh tokens on and a Redis user limited to `f_*` keys, every refresh fails with `500`. **Action:** Skip v4.12.0. Go to v4.13.0. |
 | v4.13.0 | Sign-out can also end the IdP session (`AUTH_OAUTH_IDP_LOGOUT_URL`), with an optional `id_token_hint`. Off by default (no action). To use it, see [End the IdP session too](sessions.md#end-the-idp-session-too). |
+| v4.13.1 | Dependency updates (no action). |
+| v4.14.0 | New `AUTH_GENERIC_REQUIRE_ACCESS_TOKEN_ISSUER` makes the generic backend check the issuer of the IdP access token. Off by default (no action). |
+| v4.15.0 | The CSRF token cookie lasts the whole refresh session (no action). If the refresh store revoke fails two times, sign-out answers `503`. It deletes the access cookie and keeps the refresh, CSRF token and ID token cookies. A login with an empty `sub` is refused. **Action:** Handle a `503` from sign-out as a failed sign-out in every app, for a `fetch` and for a form post. See [CSRF Protection and Cookie Mode](csrf.md) and [Sign out](sessions.md#sign-out). |
 
 ### Magic link rate limits
 
@@ -92,9 +95,9 @@ At `0`, LutherAuth ignores `X-Forwarded-For`, because a client can forge it. If 
 
 ## Upgrade LutherAuth
 
-Change the image tag to `luthersystems/auth:v4.13.0` and roll the pods. The image is multi-architecture (`linux/amd64` and `linux/arm64`).
+Change the image tag to `luthersystems/auth:v4.15.0` and roll the pods. The image is multi-architecture (`linux/amd64` and `linux/arm64`).
 
-To roll back, set the previous tag. Access tokens and service tokens keep working after a rollback, because they are signed with the same key. With refresh tokens on, a rollback to a version before v4.10.0 signs out the users who logged in after the upgrade. The token endpoint and `mint-token` are not in versions before v4.9.0. Do not roll back from v4.13.0 to v4.12.0: refresh fails again (see [Known Issues](../../known-issues.md)). A rollback to v4.12.0 or earlier also ignores the `revoke-user` records that v4.13.0 wrote, so revoked users can refresh again. Run `revoke-user` again after you upgrade back.
+To roll back, set the previous tag. Access tokens and service tokens keep working after a rollback, because they are signed with the same key. With refresh tokens on, a rollback to a version before v4.10.0 signs out the users who logged in after the upgrade. The token endpoint and `mint-token` are not in versions before v4.9.0. With refresh tokens and `AUTH_OAUTH_PROTECT_CSRF` on, a rollback to a version before v4.15.0 brings back the short CSRF token cookie lifetime: the cookie expires after the access token lifetime, and every checked call fails after that. Turn off the CSRF check in your services before such a rollback. Do not roll back from v4.13.0 or later to v4.12.0: refresh fails again (see [Known Issues](../../known-issues.md)). A rollback to v4.12.0 or earlier also ignores the `revoke-user` records that v4.13.0 or later wrote, so revoked users can refresh again. Run `revoke-user` again after you upgrade back.
 
 ---
 
@@ -146,7 +149,7 @@ Run these checks in a test environment, then in production.
 
 | Check | Expected result |
 |---|---|
-| The image tag of the LutherAuth pods | `v4.13.0` |
+| The image tag of the LutherAuth pods | `v4.15.0` |
 | With refresh tokens on: log in, wait past `AUTH_JWT_REFRESH_INTERVAL`, then an API call | Works. `POST /v1/auth/refresh` returns `200`, not `500` |
 | `https://<your auth host>/v1/auth/.well-known/jwks.json` | Returns the JWKS |
 | Browser login, then an API call | Works |

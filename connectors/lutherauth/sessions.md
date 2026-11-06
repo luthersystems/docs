@@ -9,7 +9,9 @@ A LutherAuth login gives the browser two kinds of token:
 | Token | Where it lives | Lifetime | Checked by |
 |---|---|---|---|
 | Refresh token | HttpOnly cookie on `/v1/auth`, with `AUTH_ENABLE_REFRESH=true` | `AUTH_REFRESH_TIMEOUT` | LutherAuth, on each refresh, against its Redis store |
-| Access token | Returned by `POST /v1/auth/refresh`, or an `authorization` cookie for the legacy login | `AUTH_JWT_REFRESH_INTERVAL` (30m by default), or `AUTH_JWT_TIMEOUT` for the legacy login | Each service, offline, against the JWKS |
+| Access token | Returned in the body of `POST /v1/auth/refresh` | `AUTH_JWT_REFRESH_INTERVAL` (30m by default) | Each service, offline, against the JWKS |
+| Access token in cookie mode | HttpOnly `<prefix>_authorization` cookie, set by `POST /v1/auth/refresh` with `AUTH_JWT_REFRESH_COOKIE_ACCESS_TOKEN=true`. See [CSRF Protection and Cookie Mode](csrf.md) | `AUTH_JWT_REFRESH_INTERVAL` | Each service, offline, against the JWKS |
+| Access token of the legacy login | HttpOnly `<prefix>_authorization` cookie | `AUTH_JWT_TIMEOUT` | Each service, offline, against the JWKS |
 
 Each refresh rotates the refresh token. A refresh token that is used a second time (a copied cookie, for example) revokes its whole family, and the user must log in again.
 
@@ -78,6 +80,8 @@ Allow connections to the cache only from the nodes or pods that run LutherAuth (
 
 It takes an optional `redirect_url`. The host of the URL must match `AUTH_OAUTH_ENDPOINT_DELETE_COOKIE_VALID_REDIRECT_REGEXP`. A GET is refused with `405`. A bad `redirect_url` is refused with `400` (v4.12.0 and later).
 
+From v4.15.0, if the revoke fails two times (for example, Redis is down), sign-out answers `503` and does not redirect. The session is still live. Sign-out deletes the access cookie, but keeps the refresh, CSRF token and ID token cookies, so the user can sign out again when Redis is back. Treat a `503` as a failed sign-out: retry later, or run `revoke-user` for the user. A sign-out with no refresh cookie, or with an expired or invalid one, has no session to revoke. It redirects as usual.
+
 ---
 
 ## End the IdP session too
@@ -101,6 +105,7 @@ On the IdP, register each `redirect_url` as an allowed post-logout URL (Auth0: A
 |---|---|
 | A page load with `redirect_url` (a form post, `Sec-Fetch-Mode: navigate`, or no `Sec-Fetch-Mode`) | `303` to the IdP logout URL, with `client_id`, the return URL and, with the hint on, `id_token_hint`. The IdP ends its session and sends the browser to `redirect_url` |
 | A `fetch` or XHR, or a request without `redirect_url` | `200` with `{"idp_logout_url": "..."}`. A `fetch` cannot follow a redirect to another site, so the app sets `window.location` to this URL |
+| Any request, when the refresh token revoke fails two times (v4.15.0 and later) | `503`, with no redirect and no `idp_logout_url`. The access cookie is deleted. The refresh, CSRF token and ID token cookies stay. This applies to a form post too, so the browser shows the error page. See [Sign out](#sign-out) |
 
 `idp_logout_url` never carries the ID token, because any script on the page can read the response body. If your IdP needs `id_token_hint`, sign out with a form post that has `redirect_url`:
 
@@ -140,9 +145,9 @@ A refresh never asks the IdP again. A user that you disable at the IdP stays sig
 kubectl exec -n <namespace> deploy/<lutherauth deployment> -- /opt/app revoke-user --sub '<sub>'
 ```
 
-- Every refresh token of the user issued up to one minute after the command is refused at its next use. The user must log in again. The minute covers a refresh that is in progress and a small clock difference between replicas.
+- Every refresh session of the user that started (logged in) up to one minute after the command is refused at its next refresh. The user must log in again. The minute covers a refresh that is in progress and a small clock difference between replicas. From v4.15.0, a rotated refresh token keeps the time of its login, so a rotation in progress cannot carry a session past the revoke.
 - An access token already issued stays valid until it expires.
-- The `sub` must match exactly, and it depends on the login: the IdP's `sub` for OAuth, the email address for a magic link. Revoke each `sub` that the person has.
+- The `sub` must match exactly. The match is case-sensitive, and nothing is trimmed. It depends on the login: the IdP's `sub` for OAuth (`<issuer>/<sub>` for Cognito), the email address as typed for a magic link. Revoke each `sub` that the person has. The command reports success also when no session has that `sub`.
 - It needs `AUTH_ENABLE_REFRESH=true` and the Redis refresh store. It refuses to run without them.
 
 ---
