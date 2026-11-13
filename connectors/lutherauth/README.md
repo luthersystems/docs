@@ -6,7 +6,7 @@ description: The Luther authentication service, its service tokens, token checks
 
 LutherAuth (the `luthersystems/auth` image) signs in users and services, and issues the Luther access tokens (JWTs) that Luther services check. It signs in users with OAuth 2.0 and OpenID Connect identity providers (IdPs) such as Auth0, Amazon Cognito, Azure AD B2C or another OpenID Connect provider, and with magic links sent by email. It signs in services with the OAuth 2.0 client credentials grant.
 
-The current release is LutherAuth v4.13.0 ([`luthersystems/auth:v4.13.0`](https://hub.docker.com/r/luthersystems/auth/tags) on Docker Hub). Go services check its tokens with [lutherauth-sdk-go](https://github.com/luthersystems/lutherauth-sdk-go) ([v0.0.12](https://github.com/luthersystems/lutherauth-sdk-go/releases/tag/v0.0.12)).
+The current release is LutherAuth v4.15.0 ([`luthersystems/auth:v4.15.0`](https://hub.docker.com/r/luthersystems/auth/tags) on Docker Hub). Go services check its tokens with [lutherauth-sdk-go](https://github.com/luthersystems/lutherauth-sdk-go) ([v0.0.12](https://github.com/luthersystems/lutherauth-sdk-go/releases/tag/v0.0.12)).
 
 | Task | Page |
 |---|---|
@@ -16,6 +16,7 @@ The current release is LutherAuth v4.13.0 ([`luthersystems/auth:v4.13.0`](https:
 | Upgrade an existing deployment from v4.7 or later, and stop using the fake IdP | [Upgrade LutherAuth](upgrade-v4-9-0.md) |
 | Set login and session lifetimes, sign users out at LutherAuth and at the IdP, and end every session of a user | [Sessions, Sign-Out and Revocation](sessions.md) |
 | Put LutherAuth behind a CDN such as CloudFront | [Behind a CDN](behind-a-cdn.md) |
+| Protect cookie requests against CSRF, and keep the access token in an HttpOnly cookie | [CSRF Protection and Cookie Mode](csrf.md) |
 
 Every setting on these pages is an environment variable: `AUTH_` followed by the setting name in upper snake case. For example, `enable-client-credentials` is `AUTH_ENABLE_CLIENT_CREDENTIALS`.
 

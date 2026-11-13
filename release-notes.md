@@ -22,6 +22,107 @@ Issues</a>.</p>
 Operator settings applied to the chaincode container are catalogued in
 [Chaincode Environment Variables](common-operation-script/substrate/chaincode-environment-variables.md).
 
+## 2026-11-13: substrate v2.259.0
+
+- **substrate**: **Upgrade note:** some transactions take fewer ELPS steps. If you set a step limit (`SUBSTRATE_ELPS_MAX_STEPS`), upgrade every peer and pre-deploy checker of a channel together. See the [upgrade notes](https://github.com/luthersystems/substrate/blob/v2.259.0/docs/substrate-api.md)
+- **substrate**: Substrate runs on Fabric 3.1 peers. On a 3.1 peer the chaincode sends a transaction's writes to the peer in one batch. Set `CHAINCODE_WRITE_BATCH=false` to turn this off. A Fabric 2.5 peer does not change. **Upgrade note:** set the variable the same on every peer of a channel. During a rolling upgrade from 2.5 to 3.1, set it to `false` if your phylum catches the error of a failed put
+- **substrate**: The gateway does not retry a write batch that the peer refused. A transport failure is still retried
+- **substrate**: New `statedb:get-many`, `statedb:get-many-bytes`, `sidedb:get-many` and `sidedb:get-many-bytes` read a list of keys in one call. They return what `(map 'list statedb:get keys)` returns. On a Fabric 3.1 peer the keys are read in one batched call: 100 keys take 16 ms, not 43 ms. A refused key fails the whole call before any key is read
+- **substrate**: A data migration defined with `def-migration-ctx` takes fewer ELPS steps
+- **substrate**: The in-process mock of the Go SDK takes the cc-fetchurl proxy and downgrade options. It refuses a request whose fetchurl settings are different from the mock's
+- **substrate**: Bundles elps v1.98.0. A path read checks only the containers on its path, so its cost follows the path, not the document size
+- **Tooling**: In the VS Code extension, hover and completion know the new `get-many` functions. The language server no longer reports a function that a phylum defines with its own macro as undefined. The extension is published with Marketplace Trusted Publishing; nothing changes for users
+
+Details: [substrate v2.259.0 release](https://github.com/luthersystems/substrate/releases/tag/v2.259.0).
+
+## 2026-11-13: elps v1.98.0
+
+- **Language**: An `elpspath` read (`?`) with a path checks only the containers that path steps into. A fault elsewhere in the document does not change its answer, and its cost follows the path, not the document size. Writes, and a read with no path, still check the whole document
+- **Language**: `elpspath` refuses a malformed array or map header with an error. Before, it could panic
+- **Language**: `macroexpand-all` takes `:lower true`, and the new `macroexpand-all-lowered` is the same call with one argument. Each expands `get-default` as the macro it replaced expanded it, for tools that model that macro
+- **Tooling**: The VS Code extension is published with Marketplace Trusted Publishing, and its `minimatch` dependency is 11.0.1 or later, except where `vscode-languageclient` needs version 10
+
+Details: [elps v1.98.0 release](https://github.com/luthersystems/elps/releases/tag/v1.98.0).
+
+## 2026-11-12: elps v1.97.0
+
+- **Language**: `get-default` is a special operator, not a macro. Calls give the same results, and the map and key are each evaluated once. A call costs fewer steps
+- **Language**: `to-float` accepts only decimal text, such as `"-12.75"`, `".5"` or `"1e5"`. The strings `"nan"`, `"inf"` and `"infinity"`, hexadecimal floats, digits with `_` and text with spaces are now errors, as is a number too large for a float
+- **Language**: `time:time-from` returns an error for two times more than about 292 years apart. Before, it returned about 292 years with no error
+- **Language**: The reader refuses a sign joined to a `#x` or `#o` literal, such as `-#x10`. Before, it read the symbol `-` and then the number 16
+- **Language**: `?set!`, `?nil!` and `?del!` with a path that ends in `'*` write each element of a vector
+- **Language**: `regexp:regexp-match?` charges steps by the size of the text and of the pattern
+- **JSON**: The JSON functions give the same output and the same error text on both of Go 1.27's JSON engines, also for native Go values. A strict load refuses non-canonical integer text past the 64-bit range
+- **Tooling**: The language server, `elps lint` and `elps mcp` expand macros defined in the workspace, so a function that a macro in another file defines is found, not reported as undefined. References, hover, definition and rename work on files the editor has not opened. A file with no problems now clears its old diagnostics
+- **Tooling**: `elps fmt -d` prints a unified diff, and `elps fmt` keeps LF line endings for a file with CRLF endings
+- **Performance**: Fewer allocations for function calls, integers, sorted-map copies and the JSON functions
+- **Security**: built with Go 1.27.4, which fixes GO-2026-6859
+
+Details: [elps v1.97.0 release](https://github.com/luthersystems/elps/releases/tag/v1.97.0).
+
+## 2026-11-12: substrate v2.258.0
+
+- **substrate**: **Upgrade note:** this release is consensus-visible. It has no setting that turns the changes off. Upgrade every peer and pre-deploy checker of a channel in one maintenance window. The upgrade notes in [substrate-api.md](https://github.com/luthersystems/substrate/blob/v2.258.0/docs/substrate-api.md) give the read sets, write sets and step counts of each change
+- **substrate**: Security: `cc:valid-json?` no longer loads a document that a schema `$ref` names. Before, each peer read an `http://`, `https://` or `file://` reference itself, with no timeout, so two peers could give different results. Now a `$ref` to another document is an error. A `$ref` to the schema's own text works as before
+- **substrate**: Security: decimal calls have bounds. `decimal-string` with `:places` and `decimal-round` take places from -1000 to 1000, and `decimal-pow` refuses a result too large to compute. Before, one call could run until the transaction timed out. Now each such call raises an ordinary error before the work starts
+- **substrate**: The batch package keeps one state key per queued item. Schedules of one queue no longer conflict in a block. A batch holds at most 100 items, and an item with no request record no longer blocks the queue. **Upgrade note:** queues of an earlier release are not migrated. If your phylum uses the batch package, empty its queues before you upgrade: pause the schedules and let the batch processor collect and answer every batch
+- **substrate**: B+-tree fixes. A query or a delete of a tree that does not exist no longer creates the tree, and writes nothing. A delete that shrinks the root removes the old root from state. After `cc:bptree-delete-tree`, the handle works again. A node is searched with a binary search. Step counts change, see the upgrade notes
+- **substrate**: `utils:storage-pcounter` and `utils:storage-pcounter-vec` without `:prand` pick the shard from the transaction ID, not from the clock. Before, all transactions in one second wrote the same shard, and all but one failed validation
+- **substrate**: `validations:validate-address` checks the whole GB postcode. Before, a postcode with text after it, such as `"SW1A 1AA, London"`, passed
+- **substrate**: A request for the `latest` phylum version finds a version that was enabled up to 10 years ago. Before, the limit was 5.33 years
+- **substrate**: A failed flow migration records its outcome for any error text. Before, an error text with many quotes, newlines or `<` characters could not be recorded
+- **substrate**: Less work for each request: the request is decoded once, a B+-tree flush writes only its changed keys, and the state cache iterator uses no goroutine. A large request is up to 47% faster
+- **substrate**: Security: built with Go 1.27.4, which fixes GO-2026-6859 (a crash of the HTTP/1 server in `net/http`)
+- **shiroclient**: Fixes in the gateway: a deadlock when `Close` runs during a write, and three panics on a failed proposal or a missing block cache. A request body that takes more than 60 seconds to read gets HTTP 408. The Prometheus `method` label holds only known method names
+- **shiroclient**: With tracing on, the gateway starts as a user that has no entry in `/etc/passwd`. Before, it stopped with `user: Current requires cgo or $USER set in environment` (svc v0.21.1)
+- **shiroclient**: In the plugin mock, `cc-fetchurl` sends an `https` URL as `https`. Before, it sent it as plain `http`. A test on the in-process mock that sends `https` through a plain-`http` proxy must add `shiroclient.WithCCFetchURLDowngrade(true)`
+- **shirotester**: `shirotester package` needs Go 1.27 or later for a WebAssembly module. A deployed `.wasm` file still loads and runs
+
+Details: [substrate v2.258.0 release](https://github.com/luthersystems/substrate/releases/tag/v2.258.0).
+
+## 2026-11-11: svc v0.21.1
+
+- **svc**: With tracing on, a service starts when its process owner is not known, for example a container that runs as a user with no entry in `/etc/passwd`. The trace resource then has no `process.owner` and the service logs a warning. Before, `opttrace.New` failed and the service stopped. Other errors in the resource attributes (`OTEL_RESOURCE_ATTRIBUTES`) still stop it
+- **svc**: Security: built with Go 1.26.11, which fixes GO-2026-6859
+
+Details: [svc v0.21.1 release](https://github.com/luthersystems/svc/releases/tag/v0.21.1).
+
+## 2026-11-11: fabric-network-builder v0.1.2
+
+- **fabric-network-builder**: Each `CHAINCODE_*`, `SUBSTRATE_*` and `OTEL_*` variable that you give the builder goes to the chaincode containers. For example, `OTEL_BSP_SCHEDULE_DELAY` now reaches the chaincode's tracer. A value that the compose file sets is kept
+- **fabric-network-builder**: Security: the network's ports are published on `127.0.0.1` only. Before, they were open on every interface of the host. To publish on another address, set `FNB_PUBLISH_ADDR`. The first `up` after the upgrade recreates the containers
+
+Details: [fabric-network-builder v0.1.2 release](https://github.com/luthersystems/fabric-network-builder/releases/tag/v0.1.2).
+
+## 2026-11-11: buildenv v0.1.59
+
+- **General**: Security: the Go images (`build-api`, `build-go`, `build-go-alpine`, `build-godynamic`) and `build-java`, `build-js` and `build-e2e` ship Go 1.27.4, which fixes GO-2026-6859
+- **build-api, build-go**: The Debian openssh-client finding CVE-2026-123158 does not apply: the vulnerable code is in `sshd`, and the images have only the client. The images carry an OpenVEX `not_affected` statement for it
+- **General**: All images are rebuilt on the latest base images and OS packages
+
+Details: [buildenv v0.1.59 release](https://github.com/luthersystems/buildenv/releases/tag/v0.1.59).
+
+## 2026-11-06: substrate v2.257.0
+
+- **substrate**: **Upgrade note:** substrate is built with Go 1.27.3. Go 1.27 changes the bytes of zlib output and, for strings with invalid UTF-8, of JSON output. Both are consensus-visible. Upgrade every peer and pre-deploy checker of a channel in one maintenance window. While peers mix Go 1.26 and Go 1.27 builds, a transaction that compresses data fails endorsement: for example a `put-mxf` with the `zlib` compressor, or a response that holds `compress:zlib-compress` output. Reads and other transactions are not affected. Data that a Go 1.26 peer wrote still decodes
+- **substrate**: Bump ELPS to v1.96.0: the Lisp JSON functions write the same bytes on Go 1.27's JSON v2 engine as before, invalid UTF-8 included
+- **shiroclient**: The gateway health check can make one real write, to show that the network can endorse, order and commit a transaction, not only answer a query. It is off by default. Turn it on with `--health-check-write` or `SHIROCLIENT_GATEWAY_HEALTH_CHECK_WRITE=true`, then call `GET /health_check?write=true`. The write overwrites one key (`luther:healthcheck:heartbeat`), so the state does not grow. The report gets a `write` row with the transaction id and the commit time. A failed write is a `DOWN` row and HTTP 503. Checks that arrive while a write is in flight share it
+- **substrate**: Security: only a creator of the channel's admin MSP can run the heartbeat write. The chaincode cannot tell one user from another, so the service in front of the gateway (the oracle) must decide which callers may ask for it. Turn the write on only on a gateway that such a service fronts. The `luther:healthcheck:` key space is reserved: a phylum read or write of it fails
+
+Details: [substrate v2.257.0 release](https://github.com/luthersystems/substrate/releases/tag/v2.257.0).
+
+## 2026-11-05: Luther Auth v4.15.0
+
+- **General**: Fix: with refresh tokens and `AUTH_OAUTH_PROTECT_CSRF` on, the CSRF token cookie now lasts the whole refresh session, and each `POST /v1/auth/refresh` sets it again. Before, it expired after the access token lifetime (30 minutes by default), and every call that a service checked for CSRF failed after that. See [CSRF Protection and Cookie Mode](connectors/lutherauth/csrf.md)
+- **General**: Security: a refresh that is in progress when `revoke-user` runs no longer returns a new access token. A rotated refresh token keeps the time of its login, so `revoke-user` refuses every token of a session that started before it
+- **General**: Sign-out revokes the refresh token family also when the token lookup fails. **Behavior change:** if the revoke fails two times (for example, Redis is down), sign-out answers `503` and does not redirect. It keeps the refresh, CSRF token and ID token cookies, so the user can sign out again. See [Sign out](connectors/lutherauth/sessions.md#sign-out)
+- **General**: Every Redis call of the refresh store has a 5-second timeout. The connection pool holds at most 64 connections. A call that waits for a free connection gives up after the timeout
+- **General**: **Behavior change:** a login whose `sub` is empty is refused, because `revoke-user` cannot end it
+- **General**: Security: the OAuth callback refuses a nonce cookie of the wrong length with `400`. Before, a short nonce cookie such as `0` gave every such login the same refresh token family and CSRF token
+- **General**: Security: logs no longer contain refresh tokens or raw issuer values
+
+Details: [Luther Auth v4.15.0 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.15.0).
+
 ## 2026-11-05: fabric-snapshot-archiver v0.0.9
 
 - **fabric-snapshot-archiver**: `serve --snapshot-schedule` takes a snapshot on a cron schedule (UTC), uploads it to S3, and keeps the newest `--keep-archives` archives of the channel (default 14). The IAM role needs `s3:DeleteObject` to delete old archives. Prometheus metrics report the last success, so you can alert when snapshots stop. See [Take snapshots on a schedule](operations/fabric-snapshot-archiver.md#take-snapshots-on-a-schedule)
@@ -29,6 +130,18 @@ Operator settings applied to the chaincode container are catalogued in
 - **fabric-snapshot-archiver**: `archive-blocks` moves the sealed block files of the peer ledger to a cheap volume (sc1) and leaves a symlink, so the peer keeps its hot path on a fast volume (gp3). A crash at any step leaves the original file or a complete copy
 - **fabric-snapshot-archiver**: `serve` stops cleanly on SIGTERM, so a pod shutdown cancels a running snapshot
 - **fabric-snapshot-archiver**: Updates `golang.org/x/net` to v0.62.0
+
+## 2026-11-05: Luther Auth v4.14.0
+
+- **General**: New `AUTH_GENERIC_REQUIRE_ACCESS_TOKEN_ISSUER`, off by default. On, the generic OAuth backend refuses an IdP access token whose issuer is not `AUTH_GENERIC_BACKEND_ISSUER`. Turn it on only if your IdP puts the same issuer in the access token and the ID token. The ID token issuer check does not change
+
+Details: [Luther Auth v4.14.0 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.14.0).
+
+## 2026-11-05: Luther Auth v4.13.1
+
+- **General**: Updates dependencies, including the AWS SDK for Go and `golang.org/x/crypto` v0.58.0. No change in behavior
+
+Details: [Luther Auth v4.13.1 release](https://github.com/luthersystems/lutherauth/releases/tag/v4.13.1).
 
 ## 2026-11-04: substrate v2.256.0
 

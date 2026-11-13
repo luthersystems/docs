@@ -51,7 +51,7 @@ The monthly cost of 40 peers with 4 TB each, at us-west-2 list prices:
 |---|---|
 | All `sc1` | about $2,400 |
 | All `gp3` | about $13,000 |
-| Tiered on every peer: recent blocks on `gp3`, older blocks on `sc1` (upcoming, see below) | about $2,800 |
+| Tiered on every peer: recent blocks on `gp3`, older blocks on `sc1` (see below) | about $2,800 |
 | 2 or 3 archive peers with the full history (tiered), and all other peers joined from a snapshot on small `gp3` volumes | about $300 to $500 |
 
 The last layout is the least expensive and the fastest. A peer that joined from
@@ -104,17 +104,64 @@ variable `init_volume_type`), and the peer claims them by label.
 `k8s_fabric_peer_storage_class` must match the storage class of those volumes;
 it does not set their type.
 
-## Tiered storage (upcoming)
+## Tiered storage
 
 A peer keeps all of its old block files, but it reads them only to serve old
-blocks. Tiered storage keeps the state database and the recent block files on
-`gp3`, and moves the sealed (complete) block files to an `sc1` archive
-volume, with a link in their old place so the peer still finds them. This gives `gp3` commit speed at near `sc1` cost for a peer that must keep the
-full history. The archiver's `archive-blocks` mode, which moves the files,
-is merged and goes out in fabric-snapshot-archiver v0.0.9
-([fabric-snapshot-archiver#38](https://github.com/luthersystems/fabric-snapshot-archiver/pull/38)).
-Support in the mars fabric-peer chart is in progress
-([luthersystems/mars#337](https://github.com/luthersystems/mars/pull/337)).
+blocks. Tiered storage keeps the state database, the indexes and the current
+block file on `gp3`. A `block-archiver` sidecar moves each sealed (complete)
+block file to a second, `sc1` volume and leaves a link in its old place, so
+the peer still finds it. This gives `gp3` commit speed at near `sc1` cost for
+a peer that must keep the full history.
+
+### Requirements
+
+| Item | Version |
+|---|---|
+| mars | v0.145.0 or later (fabric-peer chart, [mars#337](https://github.com/luthersystems/mars/pull/337)) |
+| fabric-snapshot-archiver | v0.0.9 or later (`archive-blocks`, [fabric-snapshot-archiver#38](https://github.com/luthersystems/fabric-snapshot-archiver/pull/38)). From the first mars release after v0.145.0 ([mars#353](https://github.com/luthersystems/mars/pull/353)), the peer role stops before any change if the version is older. With an older archiver the sidecar crash-loops and the peer pod drops out of its Service |
+
+### Turn it on
+
+Set these in the environment's Ansible inventory:
+
+```yaml
+k8s_fabric_peer_volume_type_override: "gp3"
+k8s_fabric_peer_block_archive: true
+k8s_fabric_peer_block_archive_storage_size: 125Gi   # the sc1 minimum
+k8s_fabric_peer_snapshot_archiver_version: v0.0.9   # or later
+```
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `k8s_fabric_peer_block_archive` | `false` | Adds the archive volume and the sidecar |
+| `k8s_fabric_peer_block_archive_storage_size` | `125Gi` | Archive volume size. `sc1` needs 125 GiB or more |
+| `k8s_fabric_peer_block_archive_volume_type_override` | `sc1` | EBS type of the archive volume |
+| `k8s_fabric_peer_block_archive_interval` | `60s` | Time between passes (a Go duration) |
+| `k8s_fabric_peer_block_archive_max_mb_per_second` | `20` | Copy limit in MiB/s, so the first pass of a large ledger does not take the disk from the peer. `0` is no limit |
+
+Then run `fabric_peer.yaml` for the environment. It adds the volume
+`blockarchive-fabric-peer<N>-<org>`, so it restarts each peer one time.
+Later passes do not restart the peer.
+
+### Check it
+
+| Check | How |
+|---|---|
+| Archive pass | The `block-archiver` log shows `archived block file` for each sealed file, then `block archive pass done` |
+| Volume types | `fabric_snapshot_volumes.yaml` with `check_mode=true` lists each Fabric volume with its EBS type |
+| Peer restart | `fabric_peer_restart.yaml` restarts each peer, waits until it is ready and prints its first log lines |
+
+### Results on platform-test
+
+| Check | Result |
+|---|---|
+| First pass | Moved 2 sealed block files in 32 s |
+| Volume types | Archive volume `sc1` (125 GiB), peer storage `gp3` (126 GiB) |
+| Peer restart | Ready in about 40 s, 0 container restarts, ledger opened at height 15424, no block file errors |
+| Commit time (mean) | Block storage 6.2 ms, state database 3.1 ms. Before (Fabric 2.5, `gp3` only): 5.8 ms and 2.9 ms. Fabric 3.1.5 came in the same window, so this does not isolate the archive |
+| Read of old blocks | The peer served blocks 0, 4780, 9560 and 14340 (height 19120) through `qscc` `GetBlockByNumber`, 5 KB to 12 KB each. Block 0 is in `blockfile_000000`, which is on the archive volume |
+
+To do the same check, run the `fabric_block_read.yaml` playbook. It reads block 0 and the blocks at 1/4, 1/2 and 3/4 of the height from the peer, not from the orderer, and changes nothing.
 
 ## Other options we examined
 
