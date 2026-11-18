@@ -1,0 +1,11 @@
+# Work marker allowlist, read by the shared Quality workflow
+# (luthersystems/.github docs/quality-workflow.md). Only words that are not
+# deferred work belong here. Real work names an open issue inline: MARKER(#N).
+# Both pages are generated from luthersystems/frontpage-docs, whose own
+# allowlist has the same rows; change them together.
+# path | text | expires | issue | reason
+common-operation-script/development-guidelines/phylum-best-practices.md | BUG: Use BUG | never | - | The guide teaches the comment tags; the word is the subject, not work.
+common-operation-script/development-guidelines/phylum-best-practices.md | TODO: Use TODO | never | - | The guide teaches the comment tags; the word is the subject, not work.
+common-operation-script/development-guidelines/phylum-best-practices.md | FIXME: Use FIXME | never | - | The guide teaches the comment tags; the word is the subject, not work.
+common-operation-script/development-guidelines/phylum-best-practices.md | HACK: Use HACK | never | - | The guide teaches the comment tags; the word is the subject, not work.
+release-notes.md | GetFunName BUG: | never | - | Quotes a log line that an elps release removed.
