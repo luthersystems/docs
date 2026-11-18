@@ -2,10 +2,18 @@ name: Site sync guard
 
 # Refuse a hand edit to a page generated from docs.luthersystems.com. The
 # reason and the list of generated pages are in scripts/site-sync-guard.sh.
+#
+# Why push on site-sync too: the sync PR is opened by this repo's
+# GITHUB_TOKEN (site-sync-pr.yml), and GitHub runs no pull_request workflow
+# for a PR that token opens. The push run reports "guard" on the same commit,
+# so main's ruleset can require this check without blocking the sync PR. The
+# script exempts this repo's own site-sync branch, so that run passes.
 
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [site-sync]
 
 permissions:
   contents: read
@@ -18,9 +26,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Check for edits to generated pages
         env:
-          BASE: origin/${{ github.base_ref }}
-          HEAD_BRANCH: ${{ github.head_ref }}
-          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE: origin/${{ github.base_ref || 'main' }}
+          HEAD_BRANCH: ${{ github.head_ref || github.ref_name }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
         run: scripts/site-sync-guard.sh "$BASE" "$HEAD_BRANCH" "$HEAD_REPO"
