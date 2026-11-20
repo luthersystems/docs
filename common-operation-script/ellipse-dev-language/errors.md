@@ -80,3 +80,10 @@ To log an error and let it continue, call `(rethrow)` in the handler. `rethrow` 
 `with-cleanup` runs cleanup forms when its body ends, also when the body raises an error. It is the `finally` of other languages. See [with-cleanup](language-guide.md#with-cleanup).
 
 `ignore-errors` returns `()` for any error. It hides mistakes, so use `handler-bind` with named conditions where you can.
+
+`try` (elps v1.99.0, substrate v2.261.0 and later) evaluates its forms in order and returns the value of the first form that does not raise an error. The last form is not protected: its error propagates. Use it for a fallback, such as a default when a conversion fails. It catches every error except the ones that stop an evaluation: a step limit, a cancellation and an internal panic. See [try](function-reference.md#try). Keep the protected forms small, so that `try` does not hide a mistake. Inside a `defflow`, `try` may not contain an await.
+
+```lisp
+(list (try (to-int "12") 0)
+      (try (to-int "abc") 0))  ; evaluates to '(12 0)
+```

@@ -149,7 +149,7 @@ A run is in one of three states: `waiting`, `done` or `failed`.
 ([Destructuring in let](../ellipse-dev-language/let-destructuring.md)),
 `match` ([Pattern Matching](../ellipse-dev-language/pattern-matching.md)),
 `handler-bind`, `ignore-errors`, `flet` and `labels` work across awaits. An
-await inside `dotimes`, `with-cleanup` or a `lambda` (other than an inline
+await inside `dotimes`, `with-cleanup`, `try` (substrate v2.261.0 and later) or a `lambda` (other than an inline
 `:on-error` handler) is a compile error. Use
 `while` for a loop that awaits.
 
