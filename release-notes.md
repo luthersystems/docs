@@ -22,6 +22,41 @@ Issues</a>.</p>
 Operator settings applied to the chaincode container are catalogued in
 [Chaincode Environment Variables](common-operation-script/substrate/chaincode-environment-variables.md).
 
+## 2026-11-19: substrate v2.261.0
+
+- **substrate**: **Upgrade note:** this release changes results and step counts that a phylum can see. Upgrade every peer and pre-deploy checker of a channel together. No setting turns the changes off. See the [upgrade notes](https://github.com/luthersystems/substrate/blob/v2.261.0/docs/substrate-api.md)
+- **substrate**: Bundles elps v1.100.0, with the new `try` special operator and `elpspath:??` (elps v1.99.0). defflow refuses an await, `done` or `fail` inside `try`. A phylum that defines its own `try` keeps it
+- **substrate**: `stable-sort` with a key function takes fewer steps. A key function with a side effect, or one that returns a new value each call, can give a different order
+- **substrate**: `bptree-range-limit-query` on a tree opened with `:compare` checks the range in the tree's order. A range reversed in that order returns no pairs, where before some failed with `invalid range`
+- **substrate**: `cc:storage-content-fingerprint` keeps the hash's error: a step limit or a cancelled request signals `step-limit-exceeded` or `context-cancelled`, not `error`
+- **substrate**: The WebAssembly SDK moves to elps v1.100.0. A module rebuilt against it refuses input that `lval.Marshal` does not write, and each call costs more steps (about 13% on a large input). A deployed module keeps the elps it was built with
+- **Tooling**: In the VS Code extension and `shirotester lint`, a function that a workspace `def*` macro defines in another file is no longer reported as undefined
+
+Details: [substrate v2.261.0 release](https://github.com/luthersystems/substrate/releases/tag/v2.261.0).
+
+## 2026-11-19: elps v1.100.0
+
+- **Language**: `lval.Unmarshal`, the Go reader for ELPS values that WebAssembly modules use, refuses the numbers, strings and tags that the typed JSON loader refuses: a bare `"~"`, a `"~n"` integer that fits a JSON number, non-canonical base64, numbers such as `01`, `-0`, `1.0` and `1e2`, and string escapes that `lval.Marshal` does not write. Before, it read them, and a value did not always write back as the same bytes
+
+Details: [elps v1.100.0 release](https://github.com/luthersystems/elps/releases/tag/v1.100.0).
+
+## 2026-11-19: elps v1.99.0
+
+- **Language**: New special operator `try`. `(try a b c)` returns the value of the first form that does not raise an error. The last form is not protected. See [Errors](common-operation-script/ellipse-dev-language/errors.md)
+- **Language**: New `elpspath:??`. It reads as `elpspath:?` does, but returns `()` when a step meets `()`, such as a missing key. A step into a number or a string is still an error
+- **Language**: `stable-sort` calls its key function once per element, in list order. A sort with a key function takes fewer steps
+- **Language**: `#^` counts only symbols such as `%1` as placeholders. Before, a string `"%1"` in the body also counted
+- **Language**: `lval.Unmarshal` refuses the map keys that the typed JSON loader refuses
+- **Tooling**: The language server, `elps lint` and `elps mcp` find a function that a workspace `def*` macro defines in another file. Before, they could report it as undefined
+
+Details: [elps v1.99.0 release](https://github.com/luthersystems/elps/releases/tag/v1.99.0).
+
+## 2026-11-15: substrate v2.260.0
+
+- **shiroclient**: The gateway's usage reporting sends again the block ranges that an earlier report gave up on, when the license server asks for them. Each report sends at most 2,000 such blocks, oldest first; set `SHIROCLIENT_USAGE_BACKFILL_BLOCKS` to change the limit, or to `0` to turn it off. A failed resend never fails the report. The gateway counts resent blocks in `luther_license_usage_blocks_backfilled_total`. This changes only the gateway: transactions and endorsements are the same
+
+Details: [substrate v2.260.0 release](https://github.com/luthersystems/substrate/releases/tag/v2.260.0).
+
 ## 2026-11-13: substrate v2.259.0
 
 - **substrate**: **Upgrade note:** some transactions take fewer ELPS steps. If you set a step limit (`SUBSTRATE_ELPS_MAX_STEPS`), upgrade every peer and pre-deploy checker of a channel together. See the [upgrade notes](https://github.com/luthersystems/substrate/blob/v2.259.0/docs/substrate-api.md)
